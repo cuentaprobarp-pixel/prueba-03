@@ -54,7 +54,7 @@
         "name": "Espresso toniccccc",
         "price": "$20",
         "desc": "rico tonic",
-        "featured": false
+        "featured": true
       }
     ]
   },
