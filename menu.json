@@ -442,7 +442,7 @@
         "name": "pastel rico",
         "price": "$1221",
         "desc": "rico pastel",
-        "featured": true,
+        "featured": false,
         "tag": "rico"
       }
     ]
