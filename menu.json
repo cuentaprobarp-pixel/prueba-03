@@ -1,0 +1,437 @@
+[
+  {
+    "id": "espresso",
+    "label": "Espresso",
+    "items": [
+      {
+        "name": "Espresso",
+        "desc": "Doble carga de café intenso",
+        "price": "$12.700",
+        "featured": false
+      },
+      {
+        "name": "Americano",
+        "desc": "Doble carga de espresso con agua caliente",
+        "price": "$2.900"
+      },
+      {
+        "name": "Macchiato",
+        "desc": "Espresso intenso suavizado con un toque de leche vaporizada",
+        "price": "$3.150"
+      },
+      {
+        "name": "Café Filtrado",
+        "desc": "Café extraído manualmente en V60, suave y aromático",
+        "price": "$3.100"
+      },
+      {
+        "name": "Cold Brew",
+        "desc": "Café extraído en frío por 16 horas",
+        "price": "$3.490"
+      },
+      {
+        "name": "Cold Brew Sabores",
+        "desc": "Nuestro cold brew con sabor a elección",
+        "price": "$3.900"
+      },
+      {
+        "name": "Espresso Tonic",
+        "desc": "Doble carga de espresso frío con agua tónica",
+        "price": "$3.800"
+      },
+      {
+        "name": "Espresso Pink Tonic",
+        "desc": "Doble carga de espresso frío con agua tónica rosada",
+        "price": "$3.250"
+      },
+      {
+        "name": "Espresso Naranja",
+        "desc": "Doble carga de espresso frío con jugo de naranja natural (con pink tonic +$500)",
+        "price": "$4.200",
+        "featured": true
+      }
+    ]
+  },
+  {
+    "id": "leche",
+    "label": "Con Leche",
+    "items": [
+      {
+        "name": "Latte",
+        "desc": "Espresso suave con leche vaporizada y textura sedosa",
+        "price": "$4.300"
+      },
+      {
+        "name": "Cappuccino",
+        "desc": "Espresso suave con leche vaporizada y espuma aireada",
+        "price": "$3.900"
+      },
+      {
+        "name": "Flat White",
+        "desc": "Café más intenso con menos espuma",
+        "price": "$3.450"
+      },
+      {
+        "name": "Latte Sabores",
+        "desc": "Con syrup sin azúcar: vainilla · caramelo · avellana · chai · pumpkin spice",
+        "price": "$4.700"
+      },
+      {
+        "name": "Mocha",
+        "desc": "Latte con chocolate negro 63% cacao o 60% cacao sin azúcar, preparado con monedas de chocolate",
+        "price": "$4.450"
+      },
+      {
+        "name": "Mocha Blanco",
+        "desc": "Latte con chocolate blanco, preparado con monedas de chocolate",
+        "price": "$4.500"
+      },
+      {
+        "name": "Pistacho y Chocolate",
+        "desc": "Mocha a elección: 63%, 60% sin azúcar o blanco, con borde de crema de pistacho y trozos de pistacho natural",
+        "price": "$5.650",
+        "featured": true
+      },
+      {
+        "name": "Latte y Crema de Avellanas",
+        "desc": "Latte con borde de crema de avellanas y cacao tipo Nutella en su versión más saludable: vegana, sin azúcar y sin gluten",
+        "price": "$5.250"
+      },
+      {
+        "name": "Chocolate Caliente",
+        "desc": "Taza de leche caliente con monedas de chocolate, escoge entre: chocolate 63% cacao o chocolate sin azúcar 60% cacao",
+        "price": "$4.450"
+      }
+    ]
+  },
+  {
+    "id": "chai-matcha",
+    "label": "Chai & Matcha",
+    "items": [
+      {
+        "name": "Chai",
+        "desc": "Infusión de especias",
+        "price": "$3.900"
+      },
+      {
+        "name": "Chai Latte",
+        "desc": "Chai con leche a elección",
+        "price": "$4.250"
+      },
+      {
+        "name": "Dirty Chai",
+        "desc": "Chai latte con shot de espresso",
+        "price": "$4.650"
+      },
+      {
+        "name": "Matcha",
+        "desc": "Té verde japonés",
+        "price": "$4.800"
+      },
+      {
+        "name": "Matcha Latte",
+        "desc": "Té verde japonés con leche a elección",
+        "price": "$5.200"
+      },
+      {
+        "name": "Matcha Latte Sabores",
+        "desc": "Matcha con leche y syrup sin azúcar a elección",
+        "price": "$5.600"
+      },
+      {
+        "name": "Matcha Latte Frío con Fruta",
+        "desc": "Matcha con leche a elección y fruta natural",
+        "price": "$5.600"
+      },
+      {
+        "name": "Matcha Naranja Frío",
+        "desc": "Matcha frío con jugo de naranja",
+        "price": "$5.600"
+      },
+      {
+        "name": "Dirty Matcha Latte",
+        "desc": "Matcha latte con espresso",
+        "price": "$5.700"
+      }
+    ]
+  },
+  {
+    "id": "cold-foam",
+    "label": "Cold Foam & Fríos",
+    "items": [
+      {
+        "name": "Latte Cold Foam",
+        "desc": "Latte terminado con suave crema, servido en frío",
+        "price": "$4.900"
+      },
+      {
+        "name": "Matcha Latte Cold Foam",
+        "desc": "Matcha con leche terminado con suave crema, servido en frío",
+        "price": "$5.400"
+      },
+      {
+        "name": "Chai Latte Cold Foam",
+        "desc": "Chai latte con leche, terminado con suave crema, servido en frío",
+        "price": "$5.300"
+      },
+      {
+        "name": "Ice Latte",
+        "desc": "Espresso con leche a elección y hielo",
+        "price": "$4.450"
+      },
+      {
+        "name": "Ice Latte Sabores",
+        "desc": "Espresso con leche y syrup a elección (con syrup sin azúcar)",
+        "price": "$4.850"
+      }
+    ]
+  },
+  {
+    "id": "bienestar-helados",
+    "label": "Especialidades & Helados",
+    "items": [
+      {
+        "name": "Golden Milk",
+        "desc": "Infusión de cúrcuma y especias con leche a elección",
+        "price": "$4.250"
+      },
+      {
+        "name": "Dirty Golden Latte",
+        "desc": "Golden milk con shot de espresso",
+        "price": "$4.750"
+      },
+      {
+        "name": "Affogato Espresso",
+        "desc": "Helado de vainilla con shot de espresso caliente",
+        "price": "$4.800"
+      },
+      {
+        "name": "Affogato Matcha",
+        "desc": "Helado de vainilla con matcha caliente",
+        "price": "$5.450"
+      },
+      {
+        "name": "Café Helado Tradicional",
+        "desc": "Helado de vainilla con espresso, leche y crema batida opcional",
+        "price": "$5.800"
+      },
+      {
+        "name": "Matchai",
+        "desc": "Base de chai latte, seguido de matcha y terminado con cremoso cold foam. Servido en frío",
+        "price": "$5.900",
+        "featured": true
+      },
+      {
+        "name": "Tiramisú Cold Foam",
+        "desc": "Ice latte o matcha latte terminado con suave crema sabor a tiramisú, terminado con galleta de champaña",
+        "price": "$5.900",
+        "featured": true
+      }
+    ]
+  },
+  {
+    "id": "bebidas-smoothies",
+    "label": "Bebidas & Smoothies",
+    "items": [
+      {
+        "name": "Té Variedades",
+        "desc": "Earl grey, té negro con berries, té verde, english breakfast",
+        "price": "$2.900"
+      },
+      {
+        "name": "Ice Tea",
+        "desc": "Elige entre: botánico (té english breakfast con jugo de naranja natural y un toque de limón), té negro con berries o infusiones",
+        "price": "$2.900"
+      },
+      {
+        "name": "Jugos Naturales",
+        "desc": "Jugos de fruta natural",
+        "price": "$3.850"
+      },
+      {
+        "name": "Limonadas",
+        "desc": "Limonadas refrescantes",
+        "price": "$3.450"
+      },
+      {
+        "name": "Kombucha",
+        "desc": "Bebida fermentada",
+        "price": "$3.450"
+      },
+      {
+        "name": "Agua Mineral con/sin gas",
+        "desc": "Agua mineral Vital",
+        "price": "$2.200"
+      },
+      {
+        "name": "Smoothies Tradicional",
+        "desc": "Frutilla, manjar, plátano, chocolate, mantequilla de maní, mango, nutella vegana, oreo. Elige tu leche y dos sabores a elección",
+        "price": "$4.900"
+      },
+      {
+        "name": "Smoothies Proteico",
+        "desc": "Base de leche a elección, scoop de proteína whey o vegana, más dos sabores a elección. Con leche proteica (+$700)",
+        "price": "$5.550"
+      },
+      {
+        "name": "Frappuccino",
+        "desc": "Batido frío con base de leche a elección y espresso",
+        "price": "$4.850"
+      },
+      {
+        "name": "Frappuccino Sabores",
+        "desc": "Batido frío con base de leche a elección con espresso (con syrup sin azúcar a elección)",
+        "price": "$5.250"
+      }
+    ]
+  },
+  {
+    "id": "comida-dulces",
+    "label": "Pastelería & Dulces",
+    "items": [
+      {
+        "name": "Cheesecake de Chocolate",
+        "desc": "Dulce crudi-vegano sin azúcar. Relleno cremoso a base de castañas de cajú",
+        "price": "$4.200"
+      },
+      {
+        "name": "Cheesecake Frutos Rojos",
+        "desc": "Dulce crudi-vegano sin azúcar. Cremoso relleno a base de castañas de cajú",
+        "price": "$4.200"
+      },
+      {
+        "name": "Barritas Snickers",
+        "desc": "De maní o almendra. Vegano y sin azúcar",
+        "price": "$2.600"
+      },
+      {
+        "name": "Bombón Cookies & Cream",
+        "desc": "Bombón tipo oreo sin azúcar",
+        "price": "$2.400"
+      },
+      {
+        "name": "Bombón Manjar Nuez y Coco",
+        "desc": "Bombón de manjar endulzado con alulosa, coco rallado y nueces",
+        "price": "$2.400"
+      },
+      {
+        "name": "Bombón Mantequilla de Maní y Coco",
+        "desc": "Bombón de mantequilla de maní 100% natural y coco rallado",
+        "price": "$2.400"
+      },
+      {
+        "name": "Bombón Ferrero Rawcher",
+        "desc": "Bombón de dátiles, avellana europea, crema de avellana sin azúcar y cacao",
+        "price": "$2.400"
+      },
+      {
+        "name": "Crocantes",
+        "desc": "Galleta crocante de frutos secos y semillas",
+        "price": "$1.100"
+      },
+      {
+        "name": "Alfajores Chocolate Manjar",
+        "desc": "Galletas de chocolate, relleno de manjar y cubierta de chocolate negro",
+        "price": "$2.400"
+      },
+      {
+        "name": "Torta Amor",
+        "desc": "Hojarascas rellenas de manjar, crema chantilly y frambuesas naturales",
+        "price": "$5.290"
+      },
+      {
+        "name": "New York Cookies",
+        "desc": "Galletas crujientes con suave relleno (consulta por sabor del día)",
+        "price": "$4.900"
+      }
+    ]
+  },
+  {
+    "id": "salados-croissants",
+    "label": "Salados & Croissants",
+    "items": [
+      {
+        "name": "Croissant Crema de Pistacho",
+        "desc": "Relleno de nuestra crema de pistacho y pistachos en trozos",
+        "price": "$4.900"
+      },
+      {
+        "name": "Croissant Crema de Avellanas",
+        "desc": "Relleno de crema de avellanas y cacao vegano sin azúcar terminada con frutillas frescas",
+        "price": "$4.900"
+      },
+      {
+        "name": "Açaí Bowl",
+        "desc": "Base de açaí natural, sin azúcar añadida. Con toppings de frutilla, plátano, arándanos y granola endulzada con miel",
+        "price": "$7.500",
+        "featured": true
+      },
+      {
+        "name": "Focaccia de Jamón Serrano",
+        "desc": "Sándwich de focaccia con jamón serrano, verduras asadas, rúcula fresca y pesto",
+        "price": "$6.900"
+      },
+      {
+        "name": "Focaccia Veggie",
+        "desc": "Sándwich de focaccia con tomates deshidratados en aceite de oliva, verduras asadas, rúcula fresca y pesto",
+        "price": "$6.900"
+      },
+      {
+        "name": "Sándwich de Salmón Ahumado",
+        "desc": "Sándwich de masa madre en hogaza multi semillas, relleno con queso crema, salmón ahumado, rúcula fresca y pesto",
+        "price": "$6.550"
+      },
+      {
+        "name": "Sándwich de Ricotta y Tomate",
+        "desc": "Sándwich de masa madre en hogaza multi semillas relleno de ricotta, tomates cherry, albahaca fresca en aceite de oliva y pesto",
+        "price": "$6.450"
+      }
+    ]
+  },
+  {
+    "id": "extras",
+    "label": "Extras",
+    "items": [
+      {
+        "name": "Leche Proteica (+15g proteína)",
+        "desc": "Adición de leche proteica",
+        "price": "$700"
+      },
+      {
+        "name": "Scoop de Proteína",
+        "desc": "Proteína whey o vegana",
+        "price": "$1.250"
+      },
+      {
+        "name": "Borde Crema de Pistacho",
+        "desc": "Con trozos de pistacho",
+        "price": "$1.150"
+      },
+      {
+        "name": "Borde Crema de Avellanas",
+        "desc": "Crema de avellana saludable",
+        "price": "$950"
+      },
+      {
+        "name": "Crema Batida",
+        "desc": "Porción de crema batida",
+        "price": "$800"
+      },
+      {
+        "name": "Extra Leche",
+        "desc": "Adición extra de leche",
+        "price": "$600"
+      },
+      {
+        "name": "Shot de Espresso",
+        "desc": "Carga extra de café",
+        "price": "$800"
+      },
+      {
+        "name": "Syrup sin Azúcar",
+        "desc": "Sabor adicional sin azúcar",
+        "price": "$700"
+      }
+    ]
+  }
+]
