@@ -433,5 +433,10 @@
         "price": "$700"
       }
     ]
+  },
+  {
+    "id": "pasteles",
+    "label": "pastel :D",
+    "items": []
   }
 ]
