@@ -49,6 +49,12 @@
         "desc": "Doble carga de espresso frío con jugo de naranja natural (con pink tonic +$500)",
         "price": "$4.200",
         "featured": true
+      },
+      {
+        "name": "Espresso toniccccc",
+        "price": "$20",
+        "desc": "rico tonic",
+        "featured": false
       }
     ]
   },
