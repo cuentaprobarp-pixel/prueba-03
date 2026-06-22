@@ -1,6 +1,268 @@
-<script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Botánico — Nuestra Carta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --verde: #3d4f38;
+      --verde-light: #5a7052;
+      --verde-pale: #e8ede5;
+      --marron: #6b5744;
+      --marron-light: #8b7360;
+      --marron-pale: #f0e8de;
+      --crema: #f5f0e8;
+      --crema-dark: #ede5d8;
+      --blanco: #fdfbf8;
+      --texto: #2e2820;
+      --texto-suave: #6b6358;
+      --border: #d8cfc4;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Jost', sans-serif; font-weight: 300; background: var(--crema); color: var(--texto); line-height: 1.7; }
+
+    /* HERO */
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--verde); }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 50% 110%, rgba(107,87,68,0.4) 0%, transparent 70%); }
+    .hero-content { position: relative; z-index: 2; text-align: center; padding: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    .logo { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem,8vw,5rem); color: var(--crema); font-weight: 300; letter-spacing: 0.05em; opacity: 0.92; }
+    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.5rem,14vw,8rem); font-weight: 300; color: var(--crema); line-height: 1.0; }
+    .hero-title em { font-size: 0.42em; display: block; letter-spacing: 0.25em; font-style: normal; font-weight: 300; color: rgba(245,240,232,0.6); text-transform: uppercase; margin-bottom: 0.2em; }
+    .hero-address { font-size: 0.78rem; letter-spacing: 0.15em; color: rgba(245,240,232,0.5); text-transform: uppercase; margin-top: 0.5rem; }
+    .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); color: rgba(245,240,232,0.4); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .scroll-hint::after { content: ''; width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(245,240,232,0.45), transparent); }
+
+    /* FILOSOFÍA */
+    .filosofia { background: var(--blanco); padding: 4rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+    .filosofia p { max-width: 580px; margin: 0 auto 0.75rem; font-size: 1rem; }
+    .filosofia strong { font-weight: 500; color: var(--verde); }
+    .filosofia .sub { font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 2rem; }
+    .leche-badge { display: inline-flex; flex-direction: column; align-items: center; gap: 0.75rem; margin-top: 1rem; padding: 1.25rem 2rem; background: var(--verde-pale); border-radius: 1rem; border: 1px solid rgba(61,79,56,0.15); }
+    .leche-badge > span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--verde); font-weight: 500; }
+    .leche-opts { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+    .leche-opts span { padding: 0.3rem 0.85rem; background: var(--blanco); border-radius: 2rem; font-size: 0.8rem; color: var(--texto-suave); border: 1px solid var(--border); }
+
+    /* NAV */
+    .cat-nav { position: sticky; top: 0; z-index: 100; background: var(--blanco); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 0.5rem; }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-btn { flex-shrink: 0; padding: 1rem; background: none; border: none; border-bottom: 2px solid transparent; font-family: 'Jost',sans-serif; font-size: 0.72rem; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--texto-suave); cursor: pointer; transition: color 0.2s, border-color 0.2s; white-space: nowrap; }
+    .cat-btn:hover { color: var(--marron); }
+    .cat-btn.active { color: var(--verde); border-bottom-color: var(--verde); font-weight: 500; }
+
+    /* MENU */
+    .menu-main { max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem 6rem; }
+    .menu-section { display: none; animation: fadeUp 0.35s ease; }
+    .menu-section.active { display: block; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem,6vw,3.5rem); font-weight: 300; color: var(--verde); margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+
+    /* GRID */
+    .items-grid { display: grid; gap: 1px; background: var(--border); border-radius: 0.75rem; overflow: hidden; margin-bottom: 0.5rem; }
+    @media (min-width: 640px) { .items-grid { grid-template-columns: 1fr 1fr; } }
+    .item-card { display: flex; align-items: flex-start; justify-content: space-between; gap: 1.25rem; padding: 1.25rem 1.5rem; background: var(--blanco); transition: background 0.2s; position: relative; }
+    .item-card:hover { background: var(--marron-pale); }
+    .item-card.featured { background: var(--verde-pale); }
+    .item-card.featured:hover { background: #dde7da; }
+    .item-info { flex: 1; }
+    .item-info h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 400; color: var(--texto); line-height: 1.3; margin-bottom: 0.25rem; }
+    .item-card.featured .item-info h3 { color: var(--verde); }
+    .item-info p { font-size: 0.82rem; color: var(--texto-suave); line-height: 1.6; font-weight: 300; }
+    .tag { display: inline-block; font-family: 'Jost',sans-serif; font-size: 0.58rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; padding: 0.15rem 0.5rem; background: var(--marron-pale); color: var(--marron); border-radius: 2rem; vertical-align: middle; margin-left: 0.35rem; border: 1px solid rgba(107,87,68,0.15); }
+    .price { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 400; color: var(--marron); white-space: nowrap; flex-shrink: 0; padding-top: 0.1rem; }
+
+    /* FOOTER */
+    .footer { padding: 4rem 2rem; text-align: center; background: var(--verde); color: rgba(245,240,232,0.6); }
+    .footer p { font-size: 0.85rem; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
+    .footer .muted { font-size: 0.75rem; opacity: 0.45; letter-spacing: 0.12em; }
+
+    /* ADMIN TRIGGER */
+    #adminTrigger {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(61,79,56,0.08); border: 1px solid rgba(61,79,56,0.15);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+      font-size: 0.7rem; color: rgba(61,79,56,0.35); font-family: 'Cormorant Garamond', serif;
+      font-weight: 400; letter-spacing: 0.05em; user-select: none;
+    }
+    #adminTrigger:hover { background: rgba(61,79,56,0.15); transform: scale(1.1); color: rgba(61,79,56,0.6); }
+
+    /* MODAL LOGIN */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(46,40,32,0.55); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; backdrop-filter: blur(4px); }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box { background: var(--blanco); border-radius: 1rem; padding: 2.5rem 2rem; width: 340px; max-width: 90vw; box-shadow: 0 20px 60px rgba(46,40,32,0.2); transform: translateY(16px); transition: transform 0.25s; }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-logo { font-family: 'Cormorant Garamond', serif; font-size: 2.5rem; color: var(--verde); text-align: center; margin-bottom: 0.25rem; }
+    .modal-sub { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--texto-suave); text-align: center; margin-bottom: 2rem; }
+    .modal-field { margin-bottom: 1rem; }
+    .modal-field label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--texto-suave); margin-bottom: 0.4rem; }
+    .modal-field input { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.9rem; background: var(--crema); color: var(--texto); outline: none; transition: border-color 0.2s; }
+    .modal-field input:focus { border-color: var(--verde); }
+    .modal-err { font-size: 0.8rem; color: #b94040; margin-bottom: 0.75rem; text-align: center; min-height: 1.2em; }
+    .modal-btn { width: 100%; padding: 0.75rem; background: var(--verde); color: var(--crema); border: none; border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+    .modal-btn:hover { background: var(--verde-light); }
+    .modal-cancel { display: block; text-align: center; margin-top: 1rem; font-size: 0.78rem; color: var(--texto-suave); cursor: pointer; }
+    .modal-cancel:hover { color: var(--texto); }
+
+    /* ADMIN PANEL */
+    #adminPanel { position: fixed; top: 0; right: -420px; width: 400px; max-width: 95vw; height: 100vh; background: var(--blanco); border-left: 1px solid var(--border); z-index: 9998; overflow-y: auto; transition: right 0.35s cubic-bezier(0.4,0,0.2,1); box-shadow: -8px 0 32px rgba(46,40,32,0.1); display: flex; flex-direction: column; }
+    #adminPanel.open { right: 0; }
+    .ap-header { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--verde); color: var(--crema); position: sticky; top: 0; z-index: 2; }
+    .ap-header-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 300; }
+    .ap-header-sub { font-size: 0.7rem; opacity: 0.6; letter-spacing: 0.1em; text-transform: uppercase; }
+    .ap-close { background: none; border: none; color: var(--crema); font-size: 1.4rem; cursor: pointer; opacity: 0.7; line-height: 1; padding: 0.25rem; }
+    .ap-close:hover { opacity: 1; }
+    .ap-body { padding: 1.5rem; flex: 1; }
+    .ap-section { margin-bottom: 2rem; }
+    .ap-section-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--marron-light); margin-bottom: 1rem; font-weight: 500; padding-bottom: 0.5rem; border-bottom: 1px solid var(--crema-dark); }
+
+    .ap-select { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; background: var(--crema); color: var(--texto); outline: none; margin-bottom: 1rem; }
+    .ap-input { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; background: var(--crema); color: var(--texto); outline: none; transition: border-color 0.2s; }
+    .ap-input:focus { border-color: var(--verde); }
+    .ap-textarea { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.82rem; background: var(--crema); color: var(--texto); outline: none; resize: vertical; min-height: 60px; transition: border-color 0.2s; }
+    .ap-textarea:focus { border-color: var(--verde); }
+    .ap-label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--texto-suave); margin-bottom: 0.35rem; }
+    .ap-field { margin-bottom: 0.85rem; }
+    .ap-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .ap-checkbox-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.85rem; font-size: 0.85rem; color: var(--texto-suave); cursor: pointer; }
+    .ap-checkbox-row input { accent-color: var(--verde); width: 16px; height: 16px; cursor: pointer; }
+
+    .ap-btn { padding: 0.6rem 1rem; border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.78rem; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; border: 1px solid; }
+    .ap-btn-green { background: var(--verde); color: var(--crema); border-color: var(--verde); }
+    .ap-btn-green:hover { background: var(--verde-light); }
+    .ap-btn-outline { background: transparent; color: var(--verde); border-color: var(--verde); }
+    .ap-btn-outline:hover { background: var(--verde-pale); }
+    .ap-btn-red { background: transparent; color: #b94040; border-color: #b94040; }
+    .ap-btn-red:hover { background: #fdf0f0; }
+    .ap-btn-full { width: 100%; }
+    .ap-btn-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+
+    .ap-items-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 280px; overflow-y: auto; }
+    .ap-item-row { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.75rem; background: var(--crema); border-radius: 0.5rem; border: 1px solid var(--border); gap: 0.5rem; }
+    .ap-item-name { flex: 1; font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--texto); }
+    .ap-item-price { font-size: 0.8rem; color: var(--marron); white-space: nowrap; }
+    .ap-item-btns { display: flex; gap: 0.35rem; }
+    .ap-icon-btn { background: none; border: none; cursor: pointer; padding: 0.2rem 0.35rem; border-radius: 0.3rem; font-size: 0.8rem; transition: background 0.15s; }
+    .ap-icon-btn.edit { color: var(--verde); }
+    .ap-icon-btn.edit:hover { background: var(--verde-pale); }
+    .ap-icon-btn.del { color: #b94040; }
+    .ap-icon-btn.del:hover { background: #fdf0f0; }
+
+    .ap-edit-form { background: var(--verde-pale); border-radius: 0.5rem; padding: 1rem; margin-top: 0.5rem; border: 1px solid rgba(61,79,56,0.15); }
+    .ap-edit-form .ap-btn-row { margin-top: 0.5rem; }
+    .ap-success { font-size: 0.78rem; color: #2e7d32; text-align: center; margin-top: 0.5rem; min-height: 1.1em; }
+
+    @media (max-width: 600px) {
+      .item-card { padding: 1rem 1.1rem; gap: 1rem; }
+      .item-info h3 { font-size: 1.1rem; }
+      .price { font-size: 1rem; }
+      .menu-main { padding: 2rem 1rem 5rem; }
+      #adminPanel { width: 100vw; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero" id="heroSection">
+    <div class="hero-content">
+      <div class="logo">b.</div>
+      <h1 class="hero-title"><em>nuestra</em><span>carta</span></h1>
+      <p class="hero-address">O'Higgins 978, Concepción · Frente a tribunales</p>
+    </div>
+    <div class="scroll-hint">scroll</div>
+  </header>
+
+  <section class="filosofia">
+    <p>Trabajamos exclusivamente con <strong>syrups sin azúcar</strong> y <strong>leches sin lactosa</strong>.</p>
+    <p class="sub">Colaboramos con productores locales y tostadurías de Concepción, apoyando la economía de la zona y priorizando ingredientes naturales de mejor calidad.</p>
+    <div class="leche-badge">
+      <span>Elige tu leche sin costo adicional</span>
+      <div class="leche-opts"><span>Descremada</span><span>Entera</span><span>Vegetal</span></div>
+    </div>
+  </section>
+
+  <nav class="cat-nav" id="catNav"></nav>
+  <main class="menu-main" id="menuMain">
+    <p style="text-align: center; padding: 3rem; color: var(--texto-suave);">Cargando carta...</p>
+  </main>
+
+  <footer class="footer">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;margin-bottom:1rem;opacity:0.85;">b.</div>
+    <p>O'Higgins 978, Concepción</p>
+    <p class="muted">Frente a tribunales</p>
+  </footer>
+
+  <div id="adminTrigger" title="Acceso administrador">ds</div>
+
+  <!-- MODAL LOGIN -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-box">
+      <div class="modal-logo">b.</div>
+      <div class="modal-sub">Acceso administrador</div>
+      <div class="modal-field"><label>Usuario</label><input type="text" id="loginUser" placeholder="usuario" autocomplete="off" /></div>
+      <div class="modal-field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="••••••••" /></div>
+      <div class="modal-err" id="loginErr"></div>
+      <button class="modal-btn" id="loginBtn">Ingresar</button>
+      <span class="modal-cancel" id="loginCancel">Cancelar</span>
+    </div>
+  </div>
+
+  <!-- PANEL ADMIN -->
+  <div id="adminPanel">
+    <div class="ap-header">
+      <div>
+        <div class="ap-header-title">Panel Admin</div>
+        <div class="ap-header-sub">Botánico · Modificación de JSON remota</div>
+      </div>
+      <button class="ap-close" id="apClose">✕</button>
+    </div>
+    <div class="ap-body">
+
+      <!-- GESTIÓN DE ITEMS -->
+      <div class="ap-section">
+        <div class="ap-section-title">Gestionar carta</div>
+        <div class="ap-field"><label class="ap-label">Categoría</label>
+          <select class="ap-select" id="apCatSelect"></select>
+        </div>
+        <div id="apItemsList"></div>
+        
+        <div style="margin-top:1.25rem;">
+          <div class="ap-section-title" style="margin-top:0;">Agregar nuevo ítem</div>
+          <div class="ap-field"><label class="ap-label">Nombre</label><input class="ap-input" id="newName" placeholder="Ej: Latte de temporada" /></div>
+          <div class="ap-row">
+            <div class="ap-field"><label class="ap-label">Precio</label><input class="ap-input" id="newPrice" placeholder="$4.500" /></div>
+            <div class="ap-field"><label class="ap-label">Tag (opcional)</label><input class="ap-input" id="newTag" placeholder="sabores" /></div>
+          </div>
+          <div class="ap-field"><label class="ap-label">Descripción</label><textarea class="ap-textarea" id="newDesc" placeholder="Descripción del producto..."></textarea></div>
+          <label class="ap-checkbox-row"><input type="checkbox" id="newFeatured" /> Ítem destacado (fondo verde)</label>
+          <button class="ap-btn ap-btn-green ap-btn-full" id="apAddItem">+ Agregar ítem</button>
+          <div class="ap-success" id="addSuccess"></div>
+        </div>
+      </div>
+
+      <!-- AGREGAR CATEGORÍA -->
+      <div class="ap-section">
+        <div class="ap-section-title">Agregar categoría</div>
+        <div class="ap-row">
+          <div class="ap-field"><label class="ap-label">ID (sin espacios)</label><input class="ap-input" id="newCatId" placeholder="mi-categoria" /></div>
+          <div class="ap-field"><label class="ap-label">Nombre visible</label><input class="ap-input" id="newCatName" placeholder="Mi Categoría" /></div>
+        </div>
+        <button class="ap-btn ap-btn-outline ap-btn-full" id="apAddCat">+ Agregar categoría</button>
+        <div class="ap-success" id="catSuccess"></div>
+      </div>
+
+      <div class="ap-section">
+        <button class="ap-btn ap-btn-red ap-btn-full" id="apLogout">Cerrar sesión</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
   (function() {
-    // Configuración de tu repositorio de GitHub
     var ghConfig = {
       user: 'cuentaprobarp-pixel',
       repo: 'prueba-03',
@@ -14,7 +276,7 @@
     var editingIdx = null;
     var editingCatId = null;
 
-    // Estructura de respaldo completa con tus productos para que la página funcione de inmediato
+    // Estructura completa pre-cargada para que la web funcione perfectamente desde el segundo 1
     var backupData = [
       {
         "id": "espresso",
@@ -22,6 +284,10 @@
         "items": [
           { "name": "Espresso", "desc": "Doble carga de café intenso", "price": "$2.700" },
           { "name": "Americano", "desc": "Doble carga de espresso con agua caliente", "price": "$2.900" },
+          { "name": "Macchiato", "desc": "Espresso intenso suavizado con un toque de leche vaporizada", "price": "$3.150" },
+          { "name": "Café Filtrado", "desc": "Café extraído manualmente en V60, suave y aromático", "price": "$3.100" },
+          { "name": "Cold Brew", "desc": "Café extraído en frío por 16 horas", "price": "$3.490" },
+          { "name": "Espresso Tonic", "desc": "Doble carga de espresso frío con agua tónica", "price": "$3.800" },
           { "name": "Espresso Naranja", "desc": "Doble carga de espresso frío con jugo de naranja natural", "price": "$4.200", "featured": true }
         ]
       },
@@ -30,16 +296,27 @@
         "label": "Con Leche",
         "items": [
           { "name": "Latte", "desc": "Espresso suave con leche vaporizada y textura sedosa", "price": "$4.300" },
-          { "name": "Cappuccino", "desc": "Espresso suave con leche vaporizada y espuma aireada", "price": "$3.900" }
+          { "name": "Cappuccino", "desc": "Espresso suave con leche vaporizada y espuma aireada", "price": "$3.900" },
+          { "name": "Flat White", "desc": "Café más intenso con menos espuma", "price": "$3.450" },
+          { "name": "Latte Sabores", "desc": "Vainilla · Caramelo · Avellana · Chai · Pumpkin Spice", "price": "$4.700", "tag": "sin azúcar" },
+          { "name": "Mocha", "desc": "Latte con chocolate negro 63% cacao o 60% sin azúcar", "price": "$4.450" },
+          { "name": "Pistacho y Chocolate", "desc": "Mocha con borde de crema de pistacho y trozos de pistacho natural", "price": "$5.650", "featured": true }
+        ]
+      },
+      {
+        "id": "frio",
+        "label": "Café Frío",
+        "items": [
+          { "name": "Ice Latte", "desc": "Espresso con leche a elección y hielo", "price": "$4.450" },
+          { "name": "Latte Cold Foam", "desc": "Latte terminado con suave crema, servido en frío", "price": "$4.900" }
         ]
       }
     ];
 
-    // 1. CARGA INTELIGENTE: Intenta leer el archivo. Si falla, usa los datos integrados para no trabarse.
     function loadMenuFromGitHub() {
       fetch('menu.json?t=' + Date.now())
         .then(res => {
-          if (!res.ok) throw new Error("Archivo local no encontrado o procesando");
+          if (!res.ok) throw new Error("Archivo local no detectado");
           return res.json();
         })
         .then(data => {
@@ -47,11 +324,11 @@
           finalizarCarga();
         })
         .catch(err => {
-          console.warn("Leyendo directamente desde la API de GitHub...");
+          console.warn("Leyendo directamente de la API de GitHub...");
           var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${ghConfig.file}`;
           fetch(url, { headers: { "Authorization": "token " + ghConfig.token }, cache: "no-store" })
             .then(res => {
-              if(!res.ok) throw new Error("No existe en API");
+              if(!res.ok) throw new Error("No existe");
               return res.json();
             })
             .then(data => {
@@ -59,7 +336,7 @@
               finalizarCarga();
             })
             .catch(e => {
-              console.log("Cargando menú de respaldo integrado en el código.");
+              console.log("Cargando base de datos segura incorporada.");
               menuData = backupData;
               finalizarCarga();
             });
@@ -73,7 +350,6 @@
       renderMenu();
     }
 
-    // 2. GUARDADO COMPLETO: Guarda y actualiza de verdad tu repositorio de GitHub
     function saveMenuToGitHub() {
       var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${ghConfig.file}`;
       
@@ -105,19 +381,18 @@
         .then(res => res.json())
         .then(resData => {
           if(resData && resData.content) {
-            console.log("✓ menu.json sincronizado correctamente en tu repositorio.");
-            showSuccess('addSuccess', '✓ ¡Guardado con éxito en GitHub!');
+            console.log("✓ menu.json guardado con éxito.");
+            showSuccess('addSuccess', '✓ ¡Guardado en GitHub!');
           } else {
-            alert("Respuesta inesperada de GitHub: " + JSON.stringify(resData));
+            alert("Error en respuesta de GitHub: " + JSON.stringify(resData));
           }
         })
         .catch(err => {
-          console.error("Error en la conexión con GitHub:", err);
-          alert("Error de red al intentar sincronizar con GitHub.");
+          console.error("Error al enviar cambios a GitHub:", err);
+          alert("Error de red.");
         });
     }
 
-    /* ---- RENDERS ---- */
     function renderMenu() {
       var nav = document.getElementById('catNav');
       var main = document.getElementById('menuMain');
@@ -274,7 +549,7 @@
       }
     }
 
-    /* ---- ACCIONES DE INTERFAZ ---- */
+    /* ---- EVENTOS ---- */
     document.getElementById('adminTrigger').addEventListener('click', function(){
       document.getElementById('loginModal').classList.add('open');
       document.getElementById('loginUser').focus();
@@ -345,3 +620,5 @@
     loadMenuFromGitHub();
   })();
   </script>
+</body>
+</html>
