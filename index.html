@@ -120,7 +120,7 @@
     .ap-section { margin-bottom: 2rem; }
     .ap-section-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--marron-light); margin-bottom: 1rem; font-weight: 500; padding-bottom: 0.5rem; border-bottom: 1px solid var(--crema-dark); }
 
-    /* Selector de categoría + items */
+    /* Fields */
     .ap-select { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; background: var(--crema); color: var(--texto); outline: none; margin-bottom: 1rem; }
     .ap-input { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; background: var(--crema); color: var(--texto); outline: none; transition: border-color 0.2s; }
     .ap-input:focus { border-color: var(--verde); }
@@ -142,7 +142,7 @@
     .ap-btn-full { width: 100%; }
     .ap-btn-row { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
 
-    /* Items list en panel */
+    /* Items list */
     .ap-items-list { display: flex; flex-direction: column; gap: 0.5rem; max-height: 280px; overflow-y: auto; }
     .ap-item-row { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.75rem; background: var(--crema); border-radius: 0.5rem; border: 1px solid var(--border); gap: 0.5rem; }
     .ap-item-name { font-size: 0.82rem; color: var(--texto); flex: 1; font-family: 'Cormorant Garamond', serif; font-size: 1rem; }
@@ -201,6 +201,7 @@
 
   <div id="adminTrigger" title="Acceso administrador">ds</div>
 
+  <!-- MODAL LOGIN -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-box">
       <div class="modal-logo">b.</div>
@@ -213,6 +214,7 @@
     </div>
   </div>
 
+  <!-- PANEL ADMIN -->
   <div id="adminPanel">
     <div class="ap-header">
       <div>
@@ -223,15 +225,7 @@
     </div>
     <div class="ap-body">
 
-      <div class="ap-section">
-        <div class="ap-section-title">Conexión con GitHub Cloud</div>
-        <p style="font-size:0.75rem; color:var(--texto-suave); margin-bottom:0.75rem;">Completa esto una sola vez para guardar los cambios directo en la nube.</p>
-        <div class="ap-field"><label class="ap-label">Usuario GitHub</label><input class="ap-input" id="gh-user" placeholder="Ej: dantesalazar" /></div>
-        <div class="ap-field"><label class="ap-label">Nombre Repositorio</label><input class="ap-input" id="gh-repo" placeholder="Ej: botanico-menu" /></div>
-        <div class="ap-field"><label class="ap-label">GitHub Token (PAT)</label><input class="ap-input" type="password" id="gh-token" placeholder="ghp_XXXXXXXXXXXXXXXXXXXX" /></div>
-        <button class="ap-btn ap-btn-outline ap-btn-full" id="apSaveGhConfig">Guardar Credenciales Locales</button>
-      </div>
-
+      <!-- GESTIÓN DE ITEMS -->
       <div class="ap-section">
         <div class="ap-section-title">Gestionar carta</div>
         <div class="ap-field"><label class="ap-label">Categoría</label>
@@ -253,6 +247,7 @@
         </div>
       </div>
 
+      <!-- AGREGAR CATEGORÍA -->
       <div class="ap-section">
         <div class="ap-section-title">Agregar categoría</div>
         <div class="ap-row">
@@ -272,7 +267,13 @@
 
   <script>
   (function() {
-    // Estructura por defecto si es la primera vez que se carga y no hay archivo creado
+    // Configuración automatizada vinculada a tu repositorio real
+    var ghConfig = {
+      user: 'cuentaprobarp-pixel',
+      repo: 'prueba-03',
+      token: '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'
+    };
+
     var defaultMenuData = [
       { id: 'espresso', label: 'Espresso', items: [
         { name: 'Espresso', desc: 'Doble carga de café intenso', price: '$2.700', featured: false },
@@ -292,85 +293,40 @@
     var isAdmin = false;
     var editingIdx = null;
     var editingCatId = null;
-    var fileSha = null; // Necesario para que GitHub sepa qué versión estamos sobrescribiendo
+    var fileSha = null;
 
-    // Configuración local de GitHub
-    var ghConfig = {
-      user: localStorage.getItem('gh_user') || '',
-      repo: localStorage.getItem('gh_repo') || '',
-      token: localStorage.getItem('gh_token') || ''
-    };
-
-    // Cargar los campos si ya existen
-    document.getElementById('gh-user').value = ghConfig.user;
-    document.getElementById('gh-repo').value = ghConfig.repo;
-    document.getElementById('gh-token').value = ghConfig.token;
-
-    // Guardar credenciales de GitHub de forma privada en el dispositivo
-    document.getElementById('apSaveGhConfig').addEventListener('click', function() {
-      var u = document.getElementById('gh-user').value.trim();
-      var r = document.getElementById('gh-repo').value.trim();
-      var t = document.getElementById('gh-token').value.trim();
-      localStorage.setItem('gh_user', u);
-      localStorage.setItem('gh_repo', r);
-      localStorage.setItem('gh_token', t);
-      ghConfig = { user: u, repo: r, token: t };
-      alert('Configuración de sincronización guardada localmente.');
-    });
-
-    // LEER LA DATA DESDE GITHUB (o usar por defecto si falla)
     function loadMenuData() {
-      if (!ghConfig.user || !ghConfig.repo) {
-        console.log("No hay repositorio configurado, cargando datos locales iniciales.");
-        menuData = defaultMenuData;
-        activeCat = menuData[0].id;
-        renderMenu();
-        return;
-      }
-
-      // Rompemos la caché añadiendo un parámetro de tiempo aleatorio
       var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/menu.json?_=` + new Date().getTime();
       
-      var headers = {};
-      if (ghConfig.token) { headers["Authorization"] = "token " + ghConfig.token; }
-
-      fetch(url, { headers: headers })
+      fetch(url, { headers: { "Authorization": "token " + ghConfig.token } })
         .then(res => {
-          if (!res.ok) throw new Error("No se pudo hallar el archivo remoto.");
+          if (!res.ok) throw new Error();
           return res.json();
         })
         .then(data => {
-          fileSha = data.sha; // Guardamos el identificador del archivo
-          var jsonString = decodeURIComponent(escape(atob(data.content))); // Desencriptar base64
+          fileSha = data.sha;
+          var jsonString = decodeURIComponent(escape(atob(data.content)));
           menuData = JSON.parse(jsonString);
           if(menuData.length > 0) activeCat = menuData[0].id;
           renderMenu();
         })
         .catch(err => {
-          console.log("Error cargando nube, cargando respaldo por defecto:", err);
+          console.log("No se encontró menú online previo. Cargando data por defecto.");
           menuData = defaultMenuData;
           activeCat = menuData[0].id;
           renderMenu();
         });
     }
 
-    // ENVIAR / ACTUALIZAR EL ARCHIVO JSON DIRECTO A GITHUB
     function saveMenuDataToGitHub() {
-      if (!ghConfig.user || !ghConfig.repo || !ghConfig.token) {
-        alert("¡Atención! Para guardar de forma global, rellena los campos de conexión con tu GitHub Token primero.");
-        renderMenu();
-        return;
-      }
-
       var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/menu.json`;
       var jsonString = JSON.stringify(menuData, null, 2);
-      // Encriptar a base64 soportando caracteres especiales latinos
       var base64Content = btoa(unescape(encodeURIComponent(jsonString))); 
 
       var bodyData = {
-        message: "Actualización automática de precios de la carta",
+        message: "Actualización automática de la carta",
         content: base64Content,
-        sha: fileSha // Identificador para reemplazar la versión previa
+        sha: fileSha
       };
 
       fetch(url, {
@@ -384,16 +340,11 @@
       .then(res => res.json())
       .then(data => {
         if (data.content && data.content.sha) {
-          fileSha = data.content.sha; // Actualizamos el SHA local para cambios futuros
-          console.log("✓ Sincronizado con éxito en tu GitHub");
-        } else {
-          throw new Error("Respuesta inesperada");
+          fileSha = data.content.sha;
+          console.log("✓ Sincronizado en GitHub con éxito.");
         }
       })
-      .catch(err => {
-        console.error("Error al sincronizar con GitHub:", err);
-        alert("No se pudo sincronizar en la nube. Verifica tu Token de GitHub.");
-      });
+      .catch(err => alert("Error al guardar en GitHub. Revisa el nombre del repositorio o usuario."));
     }
 
     /* ---- RENDER MENU ---- */
@@ -404,7 +355,7 @@
       main.innerHTML = '';
 
       if (menuData.length === 0) {
-        main.innerHTML = '<div style="text-align:center; padding: 3rem;">No hay categorías creadas.</div>';
+        main.innerHTML = '<div style="text-align:center; padding: 3rem;">No hay categorías.</div>';
         return;
       }
 
@@ -485,8 +436,8 @@
         row.innerHTML = '<span class="ap-item-name">' + item.name + '</span>' +
           '<span class="ap-item-price">' + item.price + '</span>' +
           '<span class="ap-item-btns">' +
-          '<button class="ap-icon-btn edit" data-idx="' + idx + '" title="Editar">✏️</button>' +
-          '<button class="ap-icon-btn del" data-idx="' + idx + '" title="Eliminar">🗑️</button>' +
+          '<button class="ap-icon-btn edit" data-idx="' + idx + '">✏️</button>' +
+          '<button class="ap-icon-btn del" data-idx="' + idx + '">🗑️</button>' +
           '</span>';
         list.appendChild(row);
 
@@ -510,7 +461,7 @@
             item.featured = document.getElementById('edt-featured').checked;
             editingIdx = null; editingCatId = null;
             renderMenu(); renderAdminItems();
-            saveMenuDataToGitHub(); // Enviamos los cambios a la nube
+            saveMenuDataToGitHub();
           });
           document.getElementById('edt-cancel').addEventListener('click', function(){ editingIdx=null; editingCatId=null; renderAdminItems(); });
         }
@@ -532,7 +483,7 @@
             cat.items.splice(i, 1);
             editingIdx = null; editingCatId = null;
             renderMenu(); renderAdminItems();
-            saveMenuDataToGitHub(); // Enviamos los cambios a la nube
+            saveMenuDataToGitHub();
           }
         });
       });
@@ -599,7 +550,7 @@
       document.getElementById('newFeatured').checked = false;
       renderMenu(); renderAdminItems();
       showSuccess('addSuccess', '✓ Ítem agregado');
-      saveMenuDataToGitHub(); // Enviamos los cambios a la nube
+      saveMenuDataToGitHub();
     });
 
     /* ---- ADD CATEGORY ---- */
@@ -613,7 +564,7 @@
       document.getElementById('newCatName').value = '';
       renderMenu(); populateAdminCatSelect();
       showSuccess('catSuccess', '✓ Categoría creada');
-      saveMenuDataToGitHub(); // Enviamos los cambios a la nube
+      saveMenuDataToGitHub();
     });
 
     /* ---- INICIALIZACIÓN ---- */
