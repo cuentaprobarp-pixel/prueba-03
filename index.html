@@ -25,7 +25,7 @@
     body { font-family: 'Jost', sans-serif; font-weight: 300; background: var(--crema); color: var(--texto); line-height: 1.7; }
 
     /* HERO */
-    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: background 0.5s; }
+    .hero { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; transition: background 0.5s; background: var(--verde); }
     .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 50% 110%, rgba(107,87,68,0.4) 0%, transparent 70%); }
     .hero-content { position: relative; z-index: 2; text-align: center; padding: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
     .logo { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem,8vw,5rem); color: var(--crema); font-weight: 300; letter-spacing: 0.05em; opacity: 0.92; }
@@ -58,7 +58,6 @@
     .menu-section.active { display: block; }
     @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem,6vw,3.5rem); font-weight: 300; color: var(--verde); margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-    .subsection { font-family: 'Jost',sans-serif; font-size: 0.68rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: var(--marron-light); margin: 2.5rem 0 1.25rem; }
 
     /* GRID */
     .items-grid { display: grid; gap: 1px; background: var(--border); border-radius: 0.75rem; overflow: hidden; margin-bottom: 0.5rem; }
@@ -75,7 +74,7 @@
     .price { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 400; color: var(--marron); white-space: nowrap; flex-shrink: 0; padding-top: 0.1rem; }
 
     /* FOOTER */
-    .footer { padding: 4rem 2rem; text-align: center; transition: background 0.5s; }
+    .footer { padding: 4rem 2rem; text-align: center; transition: background 0.5s; background: var(--verde); color: rgba(245,240,232,0.6); }
     .footer p { font-size: 0.85rem; letter-spacing: 0.08em; margin-bottom: 0.2rem; }
     .footer .muted { font-size: 0.75rem; opacity: 0.45; letter-spacing: 0.12em; }
 
@@ -119,12 +118,6 @@
     .ap-body { padding: 1.5rem; flex: 1; }
     .ap-section { margin-bottom: 2rem; }
     .ap-section-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--marron-light); margin-bottom: 1rem; font-weight: 500; padding-bottom: 0.5rem; border-bottom: 1px solid var(--crema-dark); }
-
-    /* Color picker */
-    .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .color-row { display: flex; flex-direction: column; gap: 0.3rem; }
-    .color-row label { font-size: 0.72rem; color: var(--texto-suave); }
-    .color-row input[type=color] { width: 100%; height: 36px; border: 1px solid var(--border); border-radius: 0.4rem; cursor: pointer; padding: 2px; background: var(--blanco); }
 
     /* Fields */
     .ap-select { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; background: var(--crema); color: var(--texto); outline: none; margin-bottom: 1rem; }
@@ -195,9 +188,7 @@
   </section>
 
   <nav class="cat-nav" id="catNav"></nav>
-  <main class="menu-main" id="menuMain">
-    <div style="text-align:center; padding: 3rem; color: var(--texto-suave);" id="loadingText">Cargando la carta...</div>
-  </main>
+  <main class="menu-main" id="menuMain"></main>
 
   <footer class="footer" id="footerSection">
     <div class="logo-footer" style="font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;margin-bottom:1rem;opacity:0.85;">b.</div>
@@ -207,6 +198,7 @@
 
   <div id="adminTrigger" title="Acceso administrador">ds</div>
 
+  <!-- MODAL LOGIN -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-box">
       <div class="modal-logo">b.</div>
@@ -219,37 +211,18 @@
     </div>
   </div>
 
+  <!-- PANEL ADMIN -->
   <div id="adminPanel">
     <div class="ap-header">
       <div>
         <div class="ap-header-title">Panel Admin</div>
-        <div class="ap-header-sub">Botánico · Sincronizado en GitHub</div>
+        <div class="ap-header-sub">Botánico · Sincronizado directo en index.html</div>
       </div>
       <button class="ap-close" id="apClose">✕</button>
     </div>
     <div class="ap-body">
 
-      <div class="ap-section">
-        <div class="ap-section-title">Colores del sitio</div>
-        <div class="color-grid">
-          <div class="color-row"><label>Color principal (verde)</label><input type="color" id="cp-verde" value="#3d4f38" /></div>
-          <div class="color-row"><label>Acento (marrón)</label><input type="color" id="cp-marron" value="#6b5744" /></div>
-          <div class="color-row"><label>Fondo crema</label><input type="color" id="cp-crema" value="#f5f0e8" /></div>
-          <div class="color-row"><label>Hero fondo</label><input type="color" id="cp-hero" value="#3d4f38" /></div>
-        </div>
-        <div class="ap-btn-row"><button class="ap-btn ap-btn-green ap-btn-full" id="apApplyColors">Aplicar colores</button></div>
-        <div class="ap-success" id="colorSuccess"></div>
-      </div>
-
-      <div class="ap-section">
-        <div class="ap-section-title">Textos del hero</div>
-        <div class="ap-field"><label class="ap-label">Texto pequeño (arriba)</label><input class="ap-input" id="et-sub" value="nuestra" /></div>
-        <div class="ap-field"><label class="ap-label">Texto grande</label><input class="ap-input" id="et-main" value="carta" /></div>
-        <div class="ap-field"><label class="ap-label">Dirección</label><input class="ap-input" id="et-address" value="O'Higgins 978, Concepción · Frente a tribunales" /></div>
-        <div class="ap-btn-row"><button class="ap-btn ap-btn-green ap-btn-full" id="apApplyTexts">Aplicar textos</button></div>
-        <div class="ap-success" id="textSuccess"></div>
-      </div>
-
+      <!-- GESTIÓN DE ITEMS -->
       <div class="ap-section">
         <div class="ap-section-title">Gestionar carta</div>
         <div class="ap-field"><label class="ap-label">Categoría</label>
@@ -271,6 +244,7 @@
         </div>
       </div>
 
+      <!-- AGREGAR CATEGORÍA -->
       <div class="ap-section">
         <div class="ap-section-title">Agregar categoría</div>
         <div class="ap-row">
@@ -290,15 +264,14 @@
 
   <script>
   (function() {
-    // Configuración enlazada a tu cuenta y repositorio
     var ghConfig = {
       user: 'cuentaprobarp-pixel',
       repo: 'prueba-03',
       token: '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'
     };
 
-    // Todos tus datos originales recuperados al 100%
-    var defaultMenuData = [
+    // Objeto contenedor global de los datos de la carta
+    var menuData = [
       { id: 'espresso', label: 'Espresso', items: [
         { name: 'Espresso', desc: 'Doble carga de café intenso', price: '$2.700', featured: false },
         { name: 'Americano', desc: 'Doble carga de espresso con agua caliente', price: '$2.900', featured: false },
@@ -371,7 +344,7 @@
         { name: 'Barritas', desc: 'Snickers de maní o almendra', price: '$2.600', featured: false },
         { name: 'Cookies & Cream', desc: 'Bombón tipo oreo sin azúcar', price: '$2.400', featured: false },
         { name: 'Manjar Nuez y Coco', desc: 'Bombón de manjar endulzado con alulosa, coco rallado y nueces', price: '$2.400', featured: false },
-        { name: 'Mantequilla de Maní y Coco', desc: 'Bombón de mantequilla de maní 100% natural y coco rallado', price: '$2.400', featured: false },
+        { name: 'Mantequilla de Maní y Coco', desc: 'Bombón de butter de maní 100% natural y coco rallado', price: '$2.400', featured: false },
         { name: 'Ferrero Rawcher', desc: 'Bombón de dátiles, avellana europea, crema de avellana sin azúcar y cacao', price: '$2.400', featured: false },
         { name: 'Crocantes', desc: 'Galleta crocante de frutos secos y semillas', price: '$1.100', featured: false },
         { name: 'Alfajores Chocolate Manjar', desc: 'Galletas de chocolate, relleno de manjar y cubierta de chocolate negro', price: '$2.400', featured: false },
@@ -389,66 +362,79 @@
       ]}
     ];
 
-    var menuData = [];
     var activeCat = 'espresso';
     var isAdmin = false;
     var editingIdx = null;
     var editingCatId = null;
     var fileSha = null;
 
-    function loadMenuData() {
-      var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/menu.json?_=` + new Date().getTime();
-      
+    // Obtener el SHA de index.html para poder actualizarlo directamente
+    function fetchFileSha() {
+      var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/index.html?_=` + new Date().getTime();
       fetch(url, { headers: { "Authorization": "token " + ghConfig.token } })
-        .then(res => {
-          if (!res.ok) throw new Error();
-          return res.json();
-        })
+        .then(res => res.json())
+        .then(data => { fileSha = data.sha; })
+        .catch(err => console.log("Error al consultar el SHA de index.html"));
+    }
+
+    // Reescribe de forma inteligente todo el archivo index.html con la nueva matriz menuData
+    function updateIndexHtmlInGitHub() {
+      var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/index.html`;
+      
+      // Volvemos a traer el archivo crudo para asegurarnos de tener el SHA y la plantilla actualizada
+      fetch(url, { headers: { "Authorization": "token " + ghConfig.token } })
+        .then(res => res.json())
         .then(data => {
-          fileSha = data.sha;
-          var jsonString = decodeURIComponent(escape(atob(data.content)));
-          menuData = JSON.parse(jsonString);
-          if(menuData.length > 0) activeCat = menuData[0].id;
-          renderMenu();
+          var currentSha = data.sha;
+          var fullHtmlContent = decodeURIComponent(escape(atob(data.content)));
+
+          // Identificadores exactos para inyectar la información actualizada de forma limpia
+          var startMarker = "var menuData = [";
+          var endMarker = "];\n\n    var activeCat = 'espresso';";
+
+          var startIndex = fullHtmlContent.indexOf(startMarker);
+          var endIndex = fullHtmlContent.indexOf(endMarker);
+
+          if(startIndex === -1 || endIndex === -1) {
+             alert("Error crítico de estructura: no se encontraron las etiquetas de reemplazo en el archivo remoto.");
+             return;
+          }
+
+          var updatedJsonStr = JSON.stringify(menuData, null, 2);
+          // Reconstruir el string del HTML completo
+          var newHtmlContent = fullHtmlContent.substring(0, startIndex + startMarker.length) + 
+                               updatedJsonStr.substring(1, updatedJsonStr.length - 1) + 
+                               fullHtmlContent.substring(endIndex);
+
+          var base64Content = btoa(unescape(encodeURIComponent(newHtmlContent)));
+
+          var bodyData = {
+            message: "Sincronización de carta: cambios guardados con éxito",
+            content: base64Content,
+            sha: currentSha
+          };
+
+          return fetch(url, {
+            method: "PUT",
+            headers: {
+              "Authorization": "token " + ghConfig.token,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(bodyData)
+          });
+        })
+        .then(res => res.json())
+        .then(resData => {
+          if(resData && resData.content) {
+            console.log("✓ index.html actualizado y sincronizado en producción de forma remota.");
+          }
         })
         .catch(err => {
-          console.log("No se encontró menú online previo. Cargando data por defecto.");
-          menuData = defaultMenuData;
-          activeCat = menuData[0].id;
-          renderMenu();
+          console.error("Fallo definitivo al guardar los cambios en GitHub:", err);
         });
     }
 
-    function saveMenuDataToGitHub() {
-      var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/menu.json`;
-      var jsonString = JSON.stringify(menuData, null, 2);
-      var base64Content = btoa(unescape(encodeURIComponent(jsonString))); 
-
-      var bodyData = {
-        message: "Actualización automática de la carta",
-        content: base64Content,
-        sha: fileSha
-      };
-
-      fetch(url, {
-        method: "PUT",
-        headers: {
-          "Authorization": "token " + ghConfig.token,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(bodyData)
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.content && data.content.sha) {
-          fileSha = data.content.sha;
-          console.log("✓ Sincronizado en GitHub con éxito.");
-        }
-      })
-      .catch(err => console.log("Error al guardar en GitHub. Revisa la consola si persiste."));
-    }
-
-    /* ---- RENDER MENU ---- */
+    /* ---- RENDERS ---- */
     function renderMenu() {
       var nav = document.getElementById('catNav');
       var main = document.getElementById('menuMain');
@@ -456,14 +442,13 @@
       main.innerHTML = '';
 
       if (menuData.length === 0) {
-        main.innerHTML = '<div style="text-align:center; padding: 3rem;">No hay categorías.</div>';
+        main.innerHTML = '<div style="text-align:center; padding: 3rem;">No hay categorías creadas.</div>';
         return;
       }
 
       menuData.forEach(function(cat) {
         var btn = document.createElement('button');
         btn.className = 'cat-btn' + (cat.id === activeCat ? ' active' : '');
-        btn.dataset.cat = cat.id;
         btn.textContent = cat.label;
         btn.addEventListener('click', function() { activeCat = cat.id; renderMenu(); });
         nav.appendChild(btn);
@@ -471,10 +456,12 @@
         var sec = document.createElement('section');
         sec.className = 'menu-section' + (cat.id === activeCat ? ' active' : '');
         sec.id = cat.id;
+        
         var h2 = document.createElement('h2');
         h2.className = 'section-title';
         h2.textContent = cat.label;
         sec.appendChild(h2);
+
         var grid = document.createElement('div');
         grid.className = 'items-grid';
         
@@ -551,7 +538,7 @@
             '<div class="ap-field"><label class="ap-label">Tag</label><input class="ap-input" id="edt-tag" value="' + esc(item.tag||'') + '" /></div></div>' +
             '<div class="ap-field"><label class="ap-label">Descripción</label><textarea class="ap-textarea" id="edt-desc">' + esc(item.desc||'') + '</textarea></div>' +
             '<label class="ap-checkbox-row"><input type="checkbox" id="edt-featured"' + (item.featured?' checked':'') + ' /> Destacado</label>' +
-            '<div class="ap-btn-row"><button class="ap-btn ap-btn-green" id="edt-save">Guardar</button><button class="ap-btn ap-btn-outline" id="edt-cancel">Cancelar</button></div>';
+            '<div class="ap-btn-row"><button class="ap-btn ap-btn-green" id="edt-save">Guardar Cambios</button><button class="ap-btn ap-btn-outline" id="edt-cancel">Cancelar</button></div>';
           list.appendChild(form);
           
           document.getElementById('edt-save').addEventListener('click', function(){
@@ -562,7 +549,7 @@
             item.featured = document.getElementById('edt-featured').checked;
             editingIdx = null; editingCatId = null;
             renderMenu(); renderAdminItems();
-            saveMenuDataToGitHub();
+            updateIndexHtmlInGitHub();
           });
           document.getElementById('edt-cancel').addEventListener('click', function(){ editingIdx=null; editingCatId=null; renderAdminItems(); });
         }
@@ -584,7 +571,7 @@
             cat.items.splice(i, 1);
             editingIdx = null; editingCatId = null;
             renderMenu(); renderAdminItems();
-            saveMenuDataToGitHub();
+            updateIndexHtmlInGitHub();
           }
         });
       });
@@ -618,6 +605,7 @@
         document.getElementById('loginUser').value = '';
         document.getElementById('loginPass').value = '';
         isAdmin = true;
+        fetchFileSha();
         populateAdminCatSelect();
         renderAdminItems();
         document.getElementById('apCatSelect').addEventListener('change', function(){ editingIdx=null; editingCatId=null; renderAdminItems(); });
@@ -629,42 +617,6 @@
 
     document.getElementById('apClose').addEventListener('click', function(){ document.getElementById('adminPanel').classList.remove('open'); });
     document.getElementById('apLogout').addEventListener('click', function(){ isAdmin = false; document.getElementById('adminPanel').classList.remove('open'); });
-
-    /* ---- APPLY COLORS ---- */
-    document.getElementById('apApplyColors').addEventListener('click', function(){
-      var v = document.getElementById('cp-verde').value;
-      var m = document.getElementById('cp-marron').value;
-      var c = document.getElementById('cp-crema').value;
-      var h = document.getElementById('cp-hero').value;
-      document.documentElement.style.setProperty('--verde', v);
-      document.documentElement.style.setProperty('--verde-light', lighten(v, 20));
-      document.documentElement.style.setProperty('--verde-pale', lighten(v, 55));
-      document.documentElement.style.setProperty('--marron', m);
-      document.documentElement.style.setProperty('--marron-light', lighten(m, 20));
-      document.documentElement.style.setProperty('--marron-pale', lighten(m, 55));
-      document.documentElement.style.setProperty('--crema', c);
-      document.getElementById('heroSection').style.background = h;
-      document.getElementById('footerSection').style.background = h;
-      document.getElementById('footerSection').style.color = 'rgba(245,240,232,0.6)';
-      showSuccess('colorSuccess', '✓ Colores aplicados');
-    });
-
-    function lighten(hex, pct) {
-      var n = parseInt(hex.slice(1), 16);
-      var r = (n>>16)&255, g=(n>>8)&255, b=n&255;
-      r = Math.min(255, r + Math.round((255-r)*pct/100));
-      g = Math.min(255, g + Math.round((255-g)*pct/100));
-      b = Math.min(255, b + Math.round((255-b)*pct/100));
-      return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
-    }
-
-    /* ---- APPLY TEXTS ---- */
-    document.getElementById('apApplyTexts').addEventListener('click', function(){
-      document.getElementById('heroSub').textContent = document.getElementById('et-sub').value;
-      document.getElementById('heroMain').textContent = document.getElementById('et-main').value;
-      document.getElementById('heroAddress').textContent = document.getElementById('et-address').value;
-      showSuccess('textSuccess', '✓ Textos actualizados');
-    });
 
     /* ---- ADD ITEM ---- */
     document.getElementById('apAddItem').addEventListener('click', function(){
@@ -687,7 +639,7 @@
       document.getElementById('newFeatured').checked = false;
       renderMenu(); renderAdminItems();
       showSuccess('addSuccess', '✓ Ítem agregado');
-      saveMenuDataToGitHub();
+      updateIndexHtmlInGitHub();
     });
 
     /* ---- ADD CATEGORY ---- */
@@ -701,11 +653,11 @@
       document.getElementById('newCatName').value = '';
       renderMenu(); populateAdminCatSelect();
       showSuccess('catSuccess', '✓ Categoría creada');
-      saveMenuDataToGitHub();
+      updateIndexHtmlInGitHub();
     });
 
-    /* ---- INICIALIZACIÓN ---- */
-    loadMenuData();
+    // Carga inicial local
+    renderMenu();
 
   })();
   </script>
