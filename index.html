@@ -14,14 +14,32 @@
     var editingIdx = null;
     var editingCatId = null;
 
-    // 1. CARGA INICIAL MEJORADA: Si falla la ruta directa, lee de la API de GitHub de inmediato
+    // Estructura de respaldo completa con tus productos para que la página funcione de inmediato
+    var backupData = [
+      {
+        "id": "espresso",
+        "label": "Espresso",
+        "items": [
+          { "name": "Espresso", "desc": "Doble carga de café intenso", "price": "$2.700" },
+          { "name": "Americano", "desc": "Doble carga de espresso con agua caliente", "price": "$2.900" },
+          { "name": "Espresso Naranja", "desc": "Doble carga de espresso frío con jugo de naranja natural", "price": "$4.200", "featured": true }
+        ]
+      },
+      {
+        "id": "leche",
+        "label": "Con Leche",
+        "items": [
+          { "name": "Latte", "desc": "Espresso suave con leche vaporizada y textura sedosa", "price": "$4.300" },
+          { "name": "Cappuccino", "desc": "Espresso suave con leche vaporizada y espuma aireada", "price": "$3.900" }
+        ]
+      }
+    ];
+
+    // 1. CARGA INTELIGENTE: Intenta leer el archivo. Si falla, usa los datos integrados para no trabarse.
     function loadMenuFromGitHub() {
-      var apiUrl = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${ghConfig.file}`;
-      
-      // Intentamos primero leer el archivo de forma directa (más rápido)
       fetch('menu.json?t=' + Date.now())
         .then(res => {
-          if (!res.ok) throw new Error("No encontrado de forma directa");
+          if (!res.ok) throw new Error("Archivo local no encontrado o procesando");
           return res.json();
         })
         .then(data => {
@@ -29,14 +47,11 @@
           finalizarCarga();
         })
         .catch(err => {
-          console.log("Intentando cargar mediante API de GitHub...");
-          // Si el archivo es nuevo o da 404, lo traemos directo desde la API usando el token
-          fetch(apiUrl, { 
-            headers: { "Authorization": "token " + ghConfig.token },
-            cache: "no-store"
-          })
+          console.warn("Leyendo directamente desde la API de GitHub...");
+          var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${ghConfig.file}`;
+          fetch(url, { headers: { "Authorization": "token " + ghConfig.token }, cache: "no-store" })
             .then(res => {
-              if(!res.ok) throw new Error("El archivo menu.json no existe en el repositorio.");
+              if(!res.ok) throw new Error("No existe en API");
               return res.json();
             })
             .then(data => {
@@ -44,30 +59,27 @@
               finalizarCarga();
             })
             .catch(e => {
-              // Si el repositorio está completamente vacío o el JSON está mal creado, iniciamos una estructura limpia
-              console.log("Iniciando con estructura vacía debido a un error:", e.message);
-              menuData = [
-                { id: "espresso", label: "Espresso", items: [] }
-              ];
+              console.log("Cargando menú de respaldo integrado en el código.");
+              menuData = backupData;
               finalizarCarga();
             });
         });
     }
 
     function finalizarCarga() {
-      if (menuData.length > 0 && !activeCat) {
+      if (menuData && menuData.length > 0) {
         activeCat = menuData[0].id;
       }
       renderMenu();
     }
 
-    // 2. GUARDADO: Reescribe por completo el archivo menu.json en GitHub
+    // 2. GUARDADO COMPLETO: Guarda y actualiza de verdad tu repositorio de GitHub
     function saveMenuToGitHub() {
       var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/${ghConfig.file}`;
       
       fetch(url, { headers: { "Authorization": "token " + ghConfig.token }, cache: "no-store" })
         .then(res => {
-          if(!res.ok) return { sha: null }; // Si no existe, lo creará de cero
+          if(!res.ok) return { sha: null };
           return res.json();
         })
         .then(data => {
@@ -76,10 +88,10 @@
           var base64Content = btoa(unescape(encodeURIComponent(jsonString)));
 
           var bodyData = {
-            message: "Actualización de carta desde panel de administración",
+            message: "Actualización automática de precios desde la App",
             content: base64Content
           };
-          if (currentSha) bodyData.sha = currentSha; // Solo incluir SHA si el archivo ya existía
+          if (currentSha) bodyData.sha = currentSha;
 
           return fetch(url, {
             method: "PUT",
@@ -93,15 +105,15 @@
         .then(res => res.json())
         .then(resData => {
           if(resData && resData.content) {
-            console.log("✓ menu.json guardado con éxito.");
-            showSuccess('addSuccess', '✓ ¡Guardado en GitHub!');
+            console.log("✓ menu.json sincronizado correctamente en tu repositorio.");
+            showSuccess('addSuccess', '✓ ¡Guardado con éxito en GitHub!');
           } else {
-            alert("Error al guardar: " + JSON.stringify(resData));
+            alert("Respuesta inesperada de GitHub: " + JSON.stringify(resData));
           }
         })
         .catch(err => {
-          console.error("Error al actualizar menu.json:", err);
-          alert("Error de conexión con GitHub.");
+          console.error("Error en la conexión con GitHub:", err);
+          alert("Error de red al intentar sincronizar con GitHub.");
         });
     }
 
@@ -109,11 +121,12 @@
     function renderMenu() {
       var nav = document.getElementById('catNav');
       var main = document.getElementById('menuMain');
+      if(!nav || !main) return;
       nav.innerHTML = '';
       main.innerHTML = '';
 
       if (!menuData || menuData.length === 0) {
-        main.innerHTML = '<p style="text-align:center;padding:2rem;">No hay categorías creadas. Entra al panel de administración para añadir una.</p>';
+        main.innerHTML = '<p style="text-align:center;padding:2rem;">No hay ítems cargados.</p>';
         return;
       }
 
@@ -261,7 +274,7 @@
       }
     }
 
-    /* ---- LOGIN ---- */
+    /* ---- ACCIONES DE INTERFAZ ---- */
     document.getElementById('adminTrigger').addEventListener('click', function(){
       document.getElementById('loginModal').classList.add('open');
       document.getElementById('loginUser').focus();
@@ -294,7 +307,6 @@
     document.getElementById('apClose').addEventListener('click', function(){ document.getElementById('adminPanel').classList.remove('open'); });
     document.getElementById('apLogout').addEventListener('click', function(){ isAdmin = false; document.getElementById('adminPanel').classList.remove('open'); });
 
-    /* ---- ADD ITEM ---- */
     document.getElementById('apAddItem').addEventListener('click', function(){
       var name = document.getElementById('newName').value.trim();
       var price = document.getElementById('newPrice').value.trim();
@@ -318,7 +330,6 @@
       saveMenuToGitHub(); 
     });
 
-    /* ---- ADD CATEGORY ---- */
     document.getElementById('apAddCat').addEventListener('click', function(){
       var id = document.getElementById('newCatId').value.trim().replace(/\s+/g,'-');
       var label = document.getElementById('newCatName').value.trim();
