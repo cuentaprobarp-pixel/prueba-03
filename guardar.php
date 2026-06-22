@@ -1,5 +1,4 @@
 <?php
-// Permitir que cualquier dispositivo lea o envíe datos
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: GET, POST");
@@ -7,7 +6,7 @@ header("Content-Type: application/json");
 
 $archivo = 'datos_carta.json';
 
-// Si el archivo no existe, definimos la estructura inicial por defecto
+// Si el archivo no existe, creamos la estructura base inicial
 if (!file_exists($archivo)) {
     $datosIniciales = [
         "menu" => [
@@ -29,27 +28,25 @@ if (!file_exists($archivo)) {
     file_put_contents($archivo, json_encode($datosIniciales, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 }
 
-// Si la petición es POST, significa que el Administrador envió cambios para guardar
+// Procesar el guardado si es una petición POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $jsonRecibido = file_get_contents('php://input');
     $datosNuevos = json_decode($jsonRecibido, true);
     
     if ($datosNuevos) {
-        // Leemos lo que ya existe para no borrar secciones enteras si solo se actualiza una parte
         $datosActuales = json_decode(file_get_contents($archivo), true);
         
-        // Fusionamos o reemplazamos según corresponda
+        // Combinamos los campos que se hayan enviado
         if (isset($datosNuevos['menu'])) $datosActuales['menu'] = $datosNuevos['menu'];
         if (isset($datosNuevos['colores'])) $datosActuales['colores'] = $datosNuevos['colores'];
         if (isset($datosNuevos['textos'])) $datosActuales['textos'] = $datosNuevos['textos'];
         
-        // Guardamos físicamente en el archivo de texto del servidor
         file_put_contents($archivo, json_encode($datosActuales, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        echo json_encode(["status" => "success", "message" => "Datos guardados correctamente"]);
+        echo json_encode(["status" => "success", "message" => "Guardado exitoso"]);
         exit;
     }
 }
 
-// Si es una petición normal (GET), simplemente devolvemos el contenido actual del archivo
+// Responder con los datos guardados para peticiones GET convencionales
 echo file_get_contents($archivo);
 ?>
