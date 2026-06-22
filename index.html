@@ -58,7 +58,6 @@
     .menu-section.active { display: block; }
     @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
     .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem,6vw,3.5rem); font-weight: 300; color: var(--verde); margin-bottom: 2.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-    .subsection { font-family: 'Jost',sans-serif; font-size: 0.68rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: var(--marron-light); margin: 2.5rem 0 1.25rem; }
 
     /* GRID */
     .items-grid { display: grid; gap: 1px; background: var(--border); border-radius: 0.75rem; overflow: hidden; margin-bottom: 0.5rem; }
@@ -198,7 +197,7 @@
   <nav class="cat-nav" id="catNav"></nav>
 
   <main class="menu-main" id="menuMain">
-    <div style="text-align: center; padding: 3rem; opacity: 0.5;">Cargando carta desde el servidor...</div>
+    <div style="text-align: center; padding: 3rem; opacity: 0.5;">Cargando menú desde el archivo...</div>
   </main>
 
   <footer class="footer" id="footerSection">
@@ -225,7 +224,7 @@
     <div class="ap-header">
       <div>
         <div class="ap-header-title">Panel Admin</div>
-        <div class="ap-header-sub">Servidor Local Integrado</div>
+        <div class="ap-header-sub">Sincronización en la Nube Real</div>
       </div>
       <button class="ap-close" id="apClose">✕</button>
     </div>
@@ -283,7 +282,7 @@
       </div>
 
       <div class="ap-section">
-        <button class="ap-btn ap-btn-red ap-btn-full" id="apLogout">Cerrar sesión y Guardar Todo</button>
+        <button class="ap-btn ap-btn-red ap-btn-full" id="apLogout">Cerrar sesión</button>
       </div>
 
     </div>
@@ -297,21 +296,32 @@
     var editingIdx = null;
     var editingCatId = null;
 
-    // URL del script que maneja el archivo JSON
+    // Ruta del script PHP en tu servidor
     var serverURL = 'guardar.php';
 
-    /* ---- FUNCIÓN CENTRAL PARA ENVIAR CAMBIOS AL ARCHIVO DEL SERVIDOR ---- */
-    function syncWithServer(newData) {
+    /* ---- FUNCIÓN CENTRAL: ENVÍA TODO EL MENÚ AL ARCHIVO JSON ---- */
+    function saveMenuToServer() {
       return fetch(serverURL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newData)
+        body: JSON.stringify({ menu: menuData })
       })
       .then(res => res.json())
-      .catch(err => console.error("Error al sincronizar:", err));
+      .catch(err => console.error("Error al guardar cambios de la carta:", err));
     }
 
-    /* ---- CARGAR DATOS DESDE EL ARCHIVO JSON AL INICIAR ---- */
+    /* ---- FUNCIÓN COMPLEMENTARIA: ENVÍA OTROS CAMPOS AL ARCHIVO JSON ---- */
+    function syncCustomData(payload) {
+      return fetch(serverURL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .catch(err => console.error("Error al sincronizar datos:", err));
+    }
+
+    /* ---- CARGA AUTOMÁTICA DESDE EL SERVIDOR AL INICIAR LA PÁGINA ---- */
     function loadDataFromServer() {
       fetch(serverURL)
         .then(res => res.json())
@@ -326,11 +336,11 @@
           renderMenu();
         })
         .catch(err => {
-          document.getElementById('menuMain').innerHTML = '<div style="text-align: center; padding: 3rem; color: #b94040;">Error al conectar con el archivo de datos. Asegúrate de estar usando un servidor PHP.</div>';
+          document.getElementById('menuMain').innerHTML = '<div style="text-align: center; padding: 3rem; color: #b94040;">Error al leer la base de datos local. Asegúrate de subir los archivos a un hosting compatible con PHP.</div>';
         });
     }
 
-    /* ---- RENDER MENU ---- */
+    /* ---- RE-RENDERIZADO DE LA CARTA ---- */
     function renderMenu() {
       var nav = document.getElementById('catNav');
       var main = document.getElementById('menuMain');
@@ -439,10 +449,15 @@
             item.name = document.getElementById('edt-name').value.trim() || item.name;
             item.price = document.getElementById('edt-price').value.trim() || item.price;
             item.tag = document.getElementById('edt-tag').value.trim() || undefined;
+            if (!item.tag) delete item.tag;
             item.desc = document.getElementById('edt-desc').value.trim();
             item.featured = document.getElementById('edt-featured').checked;
+            
             editingIdx = null; editingCatId = null;
-            renderMenu(); renderAdminItems();
+            // Guardado automático inmediato en la nube al confirmar la edición
+            saveMenuToServer().then(() => {
+              renderMenu();
+            });
           });
           document.getElementById('edt-cancel').addEventListener('click', function(){ editingIdx=null; editingCatId=null; renderAdminItems(); });
         }
@@ -462,7 +477,10 @@
           if (confirm('¿Eliminar "' + cat.items[i].name + '"?')) {
             cat.items.splice(i, 1);
             editingIdx = null; editingCatId = null;
-            renderMenu(); renderAdminItems();
+            // Guardado automático inmediato en la nube al eliminar
+            saveMenuToServer().then(() => {
+              renderMenu();
+            });
           }
         });
       });
@@ -475,7 +493,7 @@
       setTimeout(function(){ el.textContent = ''; }, 2500);
     }
 
-    /* ---- LOGIN ---- */
+    /* ---- INTERFAZ LOGIN ---- */
     document.getElementById('adminTrigger').addEventListener('click', function(){
       document.getElementById('loginModal').classList.add('open');
       document.getElementById('loginUser').focus();
@@ -503,20 +521,9 @@
     }
 
     document.getElementById('apClose').addEventListener('click', function(){ document.getElementById('adminPanel').classList.remove('open'); });
-    
-    /* ---- ACTUALIZACIÓN Y CIERRE DE SESIÓN ---- */
-    document.getElementById('apLogout').addEventListener('click', function(){
-      isAdmin = false;
-      document.getElementById('adminPanel').classList.remove('open');
-      
-      // Enviamos el estado final del menú completo al archivo PHP al cerrar sesión
-      syncWithServer({ menu: menuData }).then(() => {
-        alert("¡Sesión cerrada! Cambios sincronizados globalmente.");
-        loadDataFromServer();
-      });
-    });
+    document.getElementById('apLogout').addEventListener('click', function(){ isAdmin = false; document.getElementById('adminPanel').classList.remove('open'); renderMenu(); });
 
-    /* ---- MODIFICAR COLORES ---- */
+    /* ---- COLORES ---- */
     document.getElementById('apApplyColors').addEventListener('click', function(){
       var colores = {
         verde: document.getElementById('cp-verde').value,
@@ -526,8 +533,8 @@
       };
       
       applyColors(colores.verde, colores.marron, colores.crema, colores.hero);
-      syncWithServer({ colores: colores }).then(() => {
-        showSuccess('colorSuccess', '✓ Colores actualizados en el archivo');
+      syncCustomData({ colores: colores }).then(() => {
+        showSuccess('colorSuccess', '✓ Colores guardados');
       });
     });
 
@@ -556,7 +563,7 @@
       return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
     }
 
-    /* ---- MODIFICAR TEXTOS ---- */
+    /* ---- TEXTOS HERO ---- */
     document.getElementById('apApplyTexts').addEventListener('click', function(){
       var textos = {
         sub: document.getElementById('et-sub').value,
@@ -565,8 +572,8 @@
       };
 
       applyTexts(textos.sub, textos.main, textos.address);
-      syncWithServer({ textos: textos }).then(() => {
-        showSuccess('textSuccess', '✓ Textos actualizados en el archivo');
+      syncCustomData({ textos: textos }).then(() => {
+        showSuccess('textSuccess', '✓ Textos guardados');
       });
     });
 
@@ -602,8 +609,12 @@
       document.getElementById('newTag').value = '';
       document.getElementById('newDesc').value = '';
       document.getElementById('newFeatured').checked = false;
-      renderMenu(); renderAdminItems();
-      showSuccess('addSuccess', '✓ Agregado a la lista de espera');
+
+      // Al agregar el ítem, se manda directo al servidor de inmediato
+      saveMenuToServer().then(() => {
+        renderMenu();
+        showSuccess('addSuccess', '✓ Ítem agregado y guardado');
+      });
     });
 
     /* ---- AGREGAR CATEGORÍA ---- */
@@ -616,11 +627,16 @@
       menuData.push({ id: id, label: label, items: [] });
       document.getElementById('newCatId').value = '';
       document.getElementById('newCatName').value = '';
-      renderMenu(); populateAdminCatSelect();
-      showSuccess('catSuccess', '✓ Categoría agregada a la lista de espera');
+
+      // Al agregar la categoría, se guarda al instante
+      saveMenuToServer().then(() => {
+        renderMenu();
+        populateAdminCatSelect();
+        showSuccess('catSuccess', '✓ Categoría creada y guardada');
+      });
     });
 
-    // Arrancar el proceso de lectura al abrir la página
+    // Iniciar lectura de datos al cargar la interfaz web
     loadDataFromServer();
 
   })();
