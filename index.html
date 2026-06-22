@@ -120,6 +120,12 @@
     .ap-section { margin-bottom: 2rem; }
     .ap-section-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.18em; color: var(--marron-light); margin-bottom: 1rem; font-weight: 500; padding-bottom: 0.5rem; border-bottom: 1px solid var(--crema-dark); }
 
+    /* Color picker */
+    .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .color-row { display: flex; flex-direction: column; gap: 0.3rem; }
+    .color-row label { font-size: 0.72rem; color: var(--texto-suave); }
+    .color-row input[type=color] { width: 100%; height: 36px; border: 1px solid var(--border); border-radius: 0.4rem; cursor: pointer; padding: 2px; background: var(--blanco); }
+
     /* Fields */
     .ap-select { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; background: var(--crema); color: var(--texto); outline: none; margin-bottom: 1rem; }
     .ap-input { width: 100%; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; font-family: 'Jost',sans-serif; font-size: 0.85rem; background: var(--crema); color: var(--texto); outline: none; transition: border-color 0.2s; }
@@ -201,7 +207,6 @@
 
   <div id="adminTrigger" title="Acceso administrador">ds</div>
 
-  <!-- MODAL LOGIN -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-box">
       <div class="modal-logo">b.</div>
@@ -214,7 +219,6 @@
     </div>
   </div>
 
-  <!-- PANEL ADMIN -->
   <div id="adminPanel">
     <div class="ap-header">
       <div>
@@ -225,7 +229,27 @@
     </div>
     <div class="ap-body">
 
-      <!-- GESTIÓN DE ITEMS -->
+      <div class="ap-section">
+        <div class="ap-section-title">Colores del sitio</div>
+        <div class="color-grid">
+          <div class="color-row"><label>Color principal (verde)</label><input type="color" id="cp-verde" value="#3d4f38" /></div>
+          <div class="color-row"><label>Acento (marrón)</label><input type="color" id="cp-marron" value="#6b5744" /></div>
+          <div class="color-row"><label>Fondo crema</label><input type="color" id="cp-crema" value="#f5f0e8" /></div>
+          <div class="color-row"><label>Hero fondo</label><input type="color" id="cp-hero" value="#3d4f38" /></div>
+        </div>
+        <div class="ap-btn-row"><button class="ap-btn ap-btn-green ap-btn-full" id="apApplyColors">Aplicar colores</button></div>
+        <div class="ap-success" id="colorSuccess"></div>
+      </div>
+
+      <div class="ap-section">
+        <div class="ap-section-title">Textos del hero</div>
+        <div class="ap-field"><label class="ap-label">Texto pequeño (arriba)</label><input class="ap-input" id="et-sub" value="nuestra" /></div>
+        <div class="ap-field"><label class="ap-label">Texto grande</label><input class="ap-input" id="et-main" value="carta" /></div>
+        <div class="ap-field"><label class="ap-label">Dirección</label><input class="ap-input" id="et-address" value="O'Higgins 978, Concepción · Frente a tribunales" /></div>
+        <div class="ap-btn-row"><button class="ap-btn ap-btn-green ap-btn-full" id="apApplyTexts">Aplicar textos</button></div>
+        <div class="ap-success" id="textSuccess"></div>
+      </div>
+
       <div class="ap-section">
         <div class="ap-section-title">Gestionar carta</div>
         <div class="ap-field"><label class="ap-label">Categoría</label>
@@ -247,7 +271,6 @@
         </div>
       </div>
 
-      <!-- AGREGAR CATEGORÍA -->
       <div class="ap-section">
         <div class="ap-section-title">Agregar categoría</div>
         <div class="ap-row">
@@ -267,24 +290,102 @@
 
   <script>
   (function() {
-    // Configuración automatizada vinculada a tu repositorio real
+    // Configuración enlazada a tu cuenta y repositorio
     var ghConfig = {
       user: 'cuentaprobarp-pixel',
       repo: 'prueba-03',
       token: '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'
     };
 
+    // Todos tus datos originales recuperados al 100%
     var defaultMenuData = [
       { id: 'espresso', label: 'Espresso', items: [
         { name: 'Espresso', desc: 'Doble carga de café intenso', price: '$2.700', featured: false },
         { name: 'Americano', desc: 'Doble carga de espresso con agua caliente', price: '$2.900', featured: false },
         { name: 'Macchiato', desc: 'Espresso intenso suavizado con un toque de leche vaporizada', price: '$3.150', featured: false },
+        { name: 'Café Filtrado', desc: 'Café extraído manualmente en V60, suave y aromático', price: '$3.100', featured: false },
+        { name: 'Cold Brew', desc: 'Café extraído en frío por 16 horas', price: '$3.490', featured: false },
+        { name: 'Cold Brew Sabores', desc: 'Nuestro cold brew con sabor a elección', price: '$3.900', tag: 'sabores', featured: false },
         { name: 'Espresso Tonic', desc: 'Doble carga de espresso frío con agua tónica', price: '$3.800', featured: false },
-        { name: 'Espresso Naranja', desc: 'Doble carga de espresso frío con jugo de naranja natural', price: '$4.200', featured: true }
+        { name: 'Espresso Tonic pequeño', desc: 'Doble carga de espresso frío con agua tónica', price: '$3.250', featured: false },
+        { name: 'Espresso Pink Tonic', desc: 'Espresso frío con tónica rosada', price: '$5.200', featured: true },
+        { name: 'Espresso Naranja', desc: 'Doble carga de espresso frío con jugo de naranja natural · con pink tonic +$500', price: '$4.200', featured: true }
       ]},
       { id: 'leche', label: 'Con Leche', items: [
         { name: 'Latte', desc: 'Espresso suave con leche vaporizada y textura sedosa', price: '$4.300', featured: false },
-        { name: 'Cappuccino', desc: 'Espresso suave con leche vaporizada y espuma aireada', price: '$3.900', featured: false }
+        { name: 'Cappuccino', desc: 'Espresso suave con leche vaporizada y espuma aireada', price: '$3.900', featured: false },
+        { name: 'Flat White', desc: 'Café más intenso con menos espuma', price: '$3.450', featured: false },
+        { name: 'Latte Sabores', desc: 'Vainilla · Caramelo · Avellana · Chai · Pumpkin Spice', price: '$4.700', tag: 'sin azúcar', featured: false },
+        { name: 'Mocha', desc: 'Latte con chocolate negro 63% cacao o 60% sin azúcar, con monedas de chocolate', price: '$4.450', featured: false },
+        { name: 'Mocha Blanco', desc: 'Latte con chocolate blanco, preparado con monedas de chocolate', price: '$4.500', featured: false },
+        { name: 'Chocolate Caliente', desc: 'Leche caliente con monedas de chocolate 63% o sin azúcar 60% cacao', price: '$4.450', featured: false },
+        { name: 'Latte y Crema de Avellanas', desc: 'Latte con borde de crema de avellanas tipo Nutella vegana, sin azúcar y sin gluten', price: '$5.250', featured: true },
+        { name: 'Pistacho y Chocolate', desc: 'Mocha con borde de crema de pistacho y trozos de pistacho natural', price: '$5.650', featured: true }
+      ]},
+      { id: 'frio', label: 'Café Frío', items: [
+        { name: 'Ice Latte', desc: 'Espresso con leche a elección y hielo', price: '$4.450', featured: false },
+        { name: 'Ice Latte Sabores', desc: 'Espresso con leche y syrup sin azúcar a elección', price: '$4.850', tag: 'sabores', featured: false },
+        { name: 'Latte Cold Foam', desc: 'Latte terminado con suave crema, servido en frío', price: '$4.900', featured: false },
+        { name: 'Matcha Latte Cold Foam', desc: 'Matcha con leche terminado con suave crema, en frío', price: '$5.400', featured: false },
+        { name: 'Chai Latte Cold Foam', desc: 'Chai latte con leche, terminado con suave crema, en frío', price: '$5.300', featured: false },
+        { name: 'Golden Milk', desc: 'Infusión de cúrcuma y especias con leche a elección', price: '$4.250', featured: false },
+        { name: 'Dirty Golden Latte', desc: 'Golden milk con shot de espresso', price: '$4.750', featured: false }
+      ]},
+      { id: 'matcha', label: 'Matcha & Chai', items: [
+        { name: 'Chai', desc: 'Infusión de especias', price: '$3.900', featured: false },
+        { name: 'Chai Latte', desc: 'Chai con leche a elección', price: '$4.250', featured: false },
+        { name: 'Dirty Chai', desc: 'Chai latte con shot de espresso', price: '$4.650', featured: false },
+        { name: 'Matcha', desc: 'Té verde japonés', price: '$4.800', featured: false },
+        { name: 'Matcha Latte', desc: 'Té verde japonés con leche a elección', price: '$5.200', featured: false },
+        { name: 'Matcha Latte Frío con Fruta', desc: 'Matcha con leche y fruta natural', price: '$5.600', featured: false },
+        { name: 'Matcha Latte Sabores', desc: 'Matcha con leche y syrup sin azúcar a elección', price: '$5.600', tag: 'sabores', featured: false },
+        { name: 'Matcha Naranja Frío', desc: 'Matcha frío con jugo de naranja natural', price: '$5.600', featured: false },
+        { name: 'Dirty Matcha Latte', desc: 'Matcha latte con espresso', price: '$5.700', featured: true }
+      ]},
+      { id: 'helado', label: 'Con Helado', items: [
+        { name: 'Affogato Espresso', desc: 'Helado de vainilla con shot de espresso caliente', price: '$4.800', featured: false },
+        { name: 'Affogato Matcha', desc: 'Helado de vainilla con matcha caliente', price: '$5.450', featured: false },
+        { name: 'Café Helado Tradicional', desc: 'Helado de vainilla con espresso, leche y crema batida opcional', price: '$5.800', featured: true }
+      ]},
+      { id: 'infusiones', label: 'Infusiones', items: [
+        { name: 'Té Variedades', desc: 'Earl Grey · Té negro con berries · Té verde · English Breakfast', price: '$2.900', featured: false },
+        { name: 'Ice Tea', desc: 'Botánico · Té negro con berries · Infusiones', price: '$2.900', featured: false }
+      ]},
+      { id: 'smoothies', label: 'Smoothies', items: [
+        { name: 'Jugos Naturales', desc: '', price: '$3.850', featured: false },
+        { name: 'Limonadas', desc: '', price: '$3.450', featured: false },
+        { name: 'Kombucha', desc: '', price: '$3.450', featured: false },
+        { name: 'Agua Mineral con/sin gas', desc: 'Vital', price: '$2.200', featured: false },
+        { name: 'Smoothie', desc: 'Elige tu leche y dos sabores: Frutilla · Manjar · Plátano · Chocolate · Mantequilla de Maní · Mango · Nutella Vegana · Oreo', price: '$4.900', featured: false },
+        { name: 'Proteico', desc: 'Leche a elección + proteína whey o vegana + dos sabores · con leche proteica +$700', price: '$5.550', featured: false },
+        { name: 'Frappuccino', desc: 'Batido frío con leche a elección y espresso', price: '$4.850', featured: false },
+        { name: 'Frappuccino Sabores', desc: 'Batido frío con leche, espresso y syrup sin azúcar a elección', price: '$5.250', tag: 'sabores', featured: false }
+      ]},
+      { id: 'especiales', label: 'Especiales', items: [
+        { name: 'Matchai', desc: 'Base de chai latte, seguido de matcha y terminado con cremoso cold foam. Servido en frío.', price: '$5.900', featured: true },
+        { name: 'Tiramisú Cold Foam', desc: 'Ice latte o matcha latte terminado con suave crema sabor tiramisú y galleta de champaña', price: '$5.900', featured: true }
+      ]},
+      { id: 'dulces', label: 'Dulces', items: [
+        { name: 'Cheesecake de Chocolate', desc: 'Relleno cremoso a base de castañas de cajú', price: '$4.200', featured: false },
+        { name: 'Cheesecake Frutos Rojos', desc: 'Cremoso relleno a base de castañas de cajú', price: '$4.200', featured: false },
+        { name: 'Barritas', desc: 'Snickers de maní o almendra', price: '$2.600', featured: false },
+        { name: 'Cookies & Cream', desc: 'Bombón tipo oreo sin azúcar', price: '$2.400', featured: false },
+        { name: 'Manjar Nuez y Coco', desc: 'Bombón de manjar endulzado con alulosa, coco rallado y nueces', price: '$2.400', featured: false },
+        { name: 'Mantequilla de Maní y Coco', desc: 'Bombón de mantequilla de maní 100% natural y coco rallado', price: '$2.400', featured: false },
+        { name: 'Ferrero Rawcher', desc: 'Bombón de dátiles, avellana europea, crema de avellana sin azúcar y cacao', price: '$2.400', featured: false },
+        { name: 'Crocantes', desc: 'Galleta crocante de frutos secos y semillas', price: '$1.100', featured: false },
+        { name: 'Alfajores Chocolate Manjar', desc: 'Galletas de chocolate, relleno de manjar y cubierta de chocolate negro', price: '$2.400', featured: false },
+        { name: 'Torta Amor', desc: 'Hojarascas rellenas de manjar, crema chantilly y frambuesas naturales', price: '$5.290', featured: true },
+        { name: 'New York Cookies', desc: 'Galletas crujientes con suave relleno — consulta por sabor del día', price: '$4.900', featured: false },
+        { name: 'Croissant Crema de Pistacho', desc: 'Relleno de crema de pistacho y pistachos en trozos', price: '$4.900', featured: false },
+        { name: 'Croissant Crema de Avellanas', desc: 'Crema de avellanas y cacao vegano sin azúcar, con frutillas frescas', price: '$4.900', featured: false }
+      ]},
+      { id: 'comida', label: 'Comida', items: [
+        { name: 'Açaí Bowl', desc: 'Base de açaí natural sin azúcar añadida, con frutilla, plátano, arándanos y granola endulzada con miel', price: '$7.500', featured: true },
+        { name: 'Focaccia de Jamón Serrano', desc: 'Jamón serrano, verduras asadas, rúcula fresca y pesto', price: '$6.900', featured: false },
+        { name: 'Focaccia Veggie', desc: 'Tomates deshidratados en aceite de oliva, verduras asadas, rúcula fresca y pesto', price: '$6.900', featured: false },
+        { name: 'Sándwich de Salmón Ahumado', desc: 'Hogaza multi semillas, queso crema, salmón ahumado, rúcula fresca y pesto', price: '$6.550', featured: false },
+        { name: 'Sándwich de Ricotta y Tomate', desc: 'Hogaza multi semillas, ricotta, tomates cherry, albahaca fresca en aceite de oliva y pesto', price: '$6.450', featured: false }
       ]}
     ];
 
@@ -344,7 +445,7 @@
           console.log("✓ Sincronizado en GitHub con éxito.");
         }
       })
-      .catch(err => alert("Error al guardar en GitHub. Revisa el nombre del repositorio o usuario."));
+      .catch(err => console.log("Error al guardar en GitHub. Revisa la consola si persiste."));
     }
 
     /* ---- RENDER MENU ---- */
@@ -528,6 +629,42 @@
 
     document.getElementById('apClose').addEventListener('click', function(){ document.getElementById('adminPanel').classList.remove('open'); });
     document.getElementById('apLogout').addEventListener('click', function(){ isAdmin = false; document.getElementById('adminPanel').classList.remove('open'); });
+
+    /* ---- APPLY COLORS ---- */
+    document.getElementById('apApplyColors').addEventListener('click', function(){
+      var v = document.getElementById('cp-verde').value;
+      var m = document.getElementById('cp-marron').value;
+      var c = document.getElementById('cp-crema').value;
+      var h = document.getElementById('cp-hero').value;
+      document.documentElement.style.setProperty('--verde', v);
+      document.documentElement.style.setProperty('--verde-light', lighten(v, 20));
+      document.documentElement.style.setProperty('--verde-pale', lighten(v, 55));
+      document.documentElement.style.setProperty('--marron', m);
+      document.documentElement.style.setProperty('--marron-light', lighten(m, 20));
+      document.documentElement.style.setProperty('--marron-pale', lighten(m, 55));
+      document.documentElement.style.setProperty('--crema', c);
+      document.getElementById('heroSection').style.background = h;
+      document.getElementById('footerSection').style.background = h;
+      document.getElementById('footerSection').style.color = 'rgba(245,240,232,0.6)';
+      showSuccess('colorSuccess', '✓ Colores aplicados');
+    });
+
+    function lighten(hex, pct) {
+      var n = parseInt(hex.slice(1), 16);
+      var r = (n>>16)&255, g=(n>>8)&255, b=n&255;
+      r = Math.min(255, r + Math.round((255-r)*pct/100));
+      g = Math.min(255, g + Math.round((255-g)*pct/100));
+      b = Math.min(255, b + Math.round((255-b)*pct/100));
+      return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+    }
+
+    /* ---- APPLY TEXTS ---- */
+    document.getElementById('apApplyTexts').addEventListener('click', function(){
+      document.getElementById('heroSub').textContent = document.getElementById('et-sub').value;
+      document.getElementById('heroMain').textContent = document.getElementById('et-main').value;
+      document.getElementById('heroAddress').textContent = document.getElementById('et-address').value;
+      showSuccess('textSuccess', '✓ Textos actualizados');
+    });
 
     /* ---- ADD ITEM ---- */
     document.getElementById('apAddItem').addEventListener('click', function(){
