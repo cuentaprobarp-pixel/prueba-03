@@ -440,9 +440,9 @@
     "items": [
       {
         "name": "pastel rico",
-        "price": "$1221",
+        "price": "1212",
         "desc": "rico pastel",
-        "featured": false,
+        "featured": true,
         "tag": "rico"
       }
     ]
