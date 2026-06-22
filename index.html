@@ -198,7 +198,6 @@
 
   <div id="adminTrigger" title="Acceso administrador">ds</div>
 
-  <!-- MODAL LOGIN -->
   <div class="modal-overlay" id="loginModal">
     <div class="modal-box">
       <div class="modal-logo">b.</div>
@@ -211,18 +210,16 @@
     </div>
   </div>
 
-  <!-- PANEL ADMIN -->
   <div id="adminPanel">
     <div class="ap-header">
       <div>
         <div class="ap-header-title">Panel Admin</div>
-        <div class="ap-header-sub">Botánico · Sincronizado directo en index.html</div>
+        <div class="ap-header-sub">Botánico · Guardado directo en repositorio</div>
       </div>
       <button class="ap-close" id="apClose">✕</button>
     </div>
     <div class="ap-body">
 
-      <!-- GESTIÓN DE ITEMS -->
       <div class="ap-section">
         <div class="ap-section-title">Gestionar carta</div>
         <div class="ap-field"><label class="ap-label">Categoría</label>
@@ -244,7 +241,6 @@
         </div>
       </div>
 
-      <!-- AGREGAR CATEGORÍA -->
       <div class="ap-section">
         <div class="ap-section-title">Agregar categoría</div>
         <div class="ap-row">
@@ -264,13 +260,13 @@
 
   <script>
   (function() {
+    // Configuración directa de tu cuenta y repositorio de GitHub
     var ghConfig = {
       user: 'cuentaprobarp-pixel',
       repo: 'prueba-03',
       token: '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'
     };
 
-    // Objeto contenedor global de los datos de la carta
     var menuData = [
       { id: 'espresso', label: 'Espresso', items: [
         { name: 'Espresso', desc: 'Doble carga de café intenso', price: '$2.700', featured: false },
@@ -344,7 +340,7 @@
         { name: 'Barritas', desc: 'Snickers de maní o almendra', price: '$2.600', featured: false },
         { name: 'Cookies & Cream', desc: 'Bombón tipo oreo sin azúcar', price: '$2.400', featured: false },
         { name: 'Manjar Nuez y Coco', desc: 'Bombón de manjar endulzado con alulosa, coco rallado y nueces', price: '$2.400', featured: false },
-        { name: 'Mantequilla de Maní y Coco', desc: 'Bombón de butter de maní 100% natural y coco rallado', price: '$2.400', featured: false },
+        { name: 'Mantequilla de Maní y Coco', desc: 'Bombón de mantequilla de maní 100% natural y coco rallado', price: '$2.400', featured: false },
         { name: 'Ferrero Rawcher', desc: 'Bombón de dátiles, avellana europea, crema de avellana sin azúcar y cacao', price: '$2.400', featured: false },
         { name: 'Crocantes', desc: 'Galleta crocante de frutos secos y semillas', price: '$1.100', featured: false },
         { name: 'Alfajores Chocolate Manjar', desc: 'Galletas de chocolate, relleno de manjar y cubierta de chocolate negro', price: '$2.400', featured: false },
@@ -366,29 +362,17 @@
     var isAdmin = false;
     var editingIdx = null;
     var editingCatId = null;
-    var fileSha = null;
 
-    // Obtener el SHA de index.html para poder actualizarlo directamente
-    function fetchFileSha() {
-      var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/index.html?_=` + new Date().getTime();
-      fetch(url, { headers: { "Authorization": "token " + ghConfig.token } })
-        .then(res => res.json())
-        .then(data => { fileSha = data.sha; })
-        .catch(err => console.log("Error al consultar el SHA de index.html"));
-    }
-
-    // Reescribe de forma inteligente todo el archivo index.html con la nueva matriz menuData
+    // Función crucial que edita el index.html en tu repositorio de GitHub de manera remota
     function updateIndexHtmlInGitHub() {
       var url = `https://api.github.com/repos/${ghConfig.user}/${ghConfig.repo}/contents/index.html`;
       
-      // Volvemos a traer el archivo crudo para asegurarnos de tener el SHA y la plantilla actualizada
       fetch(url, { headers: { "Authorization": "token " + ghConfig.token } })
         .then(res => res.json())
         .then(data => {
           var currentSha = data.sha;
           var fullHtmlContent = decodeURIComponent(escape(atob(data.content)));
 
-          // Identificadores exactos para inyectar la información actualizada de forma limpia
           var startMarker = "var menuData = [";
           var endMarker = "];\n\n    var activeCat = 'espresso';";
 
@@ -396,12 +380,11 @@
           var endIndex = fullHtmlContent.indexOf(endMarker);
 
           if(startIndex === -1 || endIndex === -1) {
-             alert("Error crítico de estructura: no se encontraron las etiquetas de reemplazo en el archivo remoto.");
+             console.error("Error de marcas en el archivo remoto.");
              return;
           }
 
           var updatedJsonStr = JSON.stringify(menuData, null, 2);
-          // Reconstruir el string del HTML completo
           var newHtmlContent = fullHtmlContent.substring(0, startIndex + startMarker.length) + 
                                updatedJsonStr.substring(1, updatedJsonStr.length - 1) + 
                                fullHtmlContent.substring(endIndex);
@@ -409,7 +392,7 @@
           var base64Content = btoa(unescape(encodeURIComponent(newHtmlContent)));
 
           var bodyData = {
-            message: "Sincronización de carta: cambios guardados con éxito",
+            message: "Sincronización automática de precios y productos",
             content: base64Content,
             sha: currentSha
           };
@@ -426,11 +409,11 @@
         .then(res => res.json())
         .then(resData => {
           if(resData && resData.content) {
-            console.log("✓ index.html actualizado y sincronizado en producción de forma remota.");
+            console.log("✓ Archivo index.html modificado con éxito en GitHub.");
           }
         })
         .catch(err => {
-          console.error("Fallo definitivo al guardar los cambios en GitHub:", err);
+          console.error("Error al empujar los cambios a GitHub:", err);
         });
     }
 
@@ -440,11 +423,6 @@
       var main = document.getElementById('menuMain');
       nav.innerHTML = '';
       main.innerHTML = '';
-
-      if (menuData.length === 0) {
-        main.innerHTML = '<div style="text-align:center; padding: 3rem;">No hay categorías creadas.</div>';
-        return;
-      }
 
       menuData.forEach(function(cat) {
         var btn = document.createElement('button');
@@ -549,7 +527,7 @@
             item.featured = document.getElementById('edt-featured').checked;
             editingIdx = null; editingCatId = null;
             renderMenu(); renderAdminItems();
-            updateIndexHtmlInGitHub();
+            updateIndexHtmlInGitHub(); // Llama a guardar en la nube
           });
           document.getElementById('edt-cancel').addEventListener('click', function(){ editingIdx=null; editingCatId=null; renderAdminItems(); });
         }
@@ -571,7 +549,7 @@
             cat.items.splice(i, 1);
             editingIdx = null; editingCatId = null;
             renderMenu(); renderAdminItems();
-            updateIndexHtmlInGitHub();
+            updateIndexHtmlInGitHub(); // Llama a guardar en la nube
           }
         });
       });
@@ -605,7 +583,6 @@
         document.getElementById('loginUser').value = '';
         document.getElementById('loginPass').value = '';
         isAdmin = true;
-        fetchFileSha();
         populateAdminCatSelect();
         renderAdminItems();
         document.getElementById('apCatSelect').addEventListener('change', function(){ editingIdx=null; editingCatId=null; renderAdminItems(); });
@@ -639,7 +616,7 @@
       document.getElementById('newFeatured').checked = false;
       renderMenu(); renderAdminItems();
       showSuccess('addSuccess', '✓ Ítem agregado');
-      updateIndexHtmlInGitHub();
+      updateIndexHtmlInGitHub(); // Llama a guardar en la nube
     });
 
     /* ---- ADD CATEGORY ---- */
@@ -653,12 +630,10 @@
       document.getElementById('newCatName').value = '';
       renderMenu(); populateAdminCatSelect();
       showSuccess('catSuccess', '✓ Categoría creada');
-      updateIndexHtmlInGitHub();
+      updateIndexHtmlInGitHub(); // Llama a guardar en la nube
     });
 
-    // Carga inicial local
     renderMenu();
-
   })();
   </script>
 </body>
